@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -8,6 +9,11 @@ class Settings(BaseSettings):
 
     UPLOADCARE_PUBLIC_KEY: str
     UPLOADCARE_SECRET_KEY: str
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def strip_database_url(cls, v: str) -> str:
+        return v.strip()
 
     class Config:
         env_file = ".env"
