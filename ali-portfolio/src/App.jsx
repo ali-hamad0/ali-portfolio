@@ -514,7 +514,9 @@ export default function App() {
   useEffect(() => {
     api.getProjects().then(data => { if(Array.isArray(data)) setProjects(data); }).catch(()=>{});
     api.getSkills().then(data => { if(Array.isArray(data)) setSkills(data); }).catch(()=>{});
-    api.getBio().then(data => { if(data && data.name) setBio(data); }).catch(()=>{});
+    api.getBio().then(data => {
+      if(data && data.name) setBio({...data, cvUrl: data.cv_url || "#"});
+    }).catch(()=>{});
   }, []);
 
   const login = async () => {
@@ -546,7 +548,10 @@ export default function App() {
 
   const saveBio = async () => {
     try {
-      await api.saveBio(bio); showToast("Bio saved ✓");
+      const payload = { name:bio.name, title:bio.title, email:bio.email, github:bio.github, linkedin:bio.linkedin, cv_url:bio.cvUrl||"" };
+      const data = await api.saveBio(payload);
+      setBio({...data, cvUrl: data.cv_url || "#"});
+      showToast("Bio saved ✓");
     } catch { showToast("Error saving bio"); }
   };
 
@@ -559,15 +564,16 @@ export default function App() {
   const handlePortraitUpload = async (file) => {
     try {
       const data = await api.uploadPortrait(file);
-      setBio(b=>({...b, portrait: data.url || data.src || data.portrait || ""}));
+      setBio(b=>({...b, portrait: data.portrait || ""}));
       showToast("Portrait uploaded ✓");
     } catch { showToast("Error uploading portrait"); }
   };
 
   const handlePortraitRemove = async () => {
     try {
-      await api.removePortrait();
-      setBio(b=>({...b, portrait:""})); showToast("Portrait removed");
+      const data = await api.removePortrait();
+      setBio(b=>({...b, portrait: data.portrait || ""}));
+      showToast("Portrait removed");
     } catch { showToast("Error removing portrait"); }
   };
 
