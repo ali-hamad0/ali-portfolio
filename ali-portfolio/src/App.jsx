@@ -616,6 +616,7 @@ export default function App() {
               <div className="hero-actions">
                 <a href="#projects" className="btn-primary"><PlusIcon/> View Projects</a>
                 <a href={bio.github} target="_blank" rel="noreferrer" className="btn-outline"><GithubIcon/> GitHub</a>
+                <a href={bio.linkedin} target="_blank" rel="noreferrer" className="btn-outline"><LinkedinIcon/> LinkedIn</a>
                 <a href={bio.cvUrl} className="btn-outline">Download CV</a>
               </div>
             </div>
