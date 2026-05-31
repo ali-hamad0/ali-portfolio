@@ -89,6 +89,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.82);backdrop-fi
 .cat-rag{background:rgba(50,150,255,0.1);color:#70b8ff}
 .cat-cv{background:rgba(255,100,150,0.1);color:#ff8ab5}
 .cat-mlops{background:rgba(255,120,80,0.1);color:#ff9070}
+.cat-other{background:rgba(255,255,255,0.06);color:var(--muted)}
 
 /* MODAL OVERLAY */
 .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .18s ease}
@@ -382,6 +383,7 @@ function ProjectForm({ project, onSave, onCancel }) {
   const blank = {id:Date.now(),title:"",short:"",full:"",tags:[],cat:"SaaS",github:"",live:"",mediaType:"none",mediaSrc:"",featured:false};
   const [f, setF] = useState(project || blank);
   const set = (k,v) => setF(p=>({...p,[k]:v}));
+  const isOther = !Object.keys(CAT_MAP).includes(f.cat);
   return (
     <form onSubmit={e=>{e.preventDefault();if(f.title.trim())onSave(f);}}>
       <div className="form-grid">
@@ -391,9 +393,15 @@ function ProjectForm({ project, onSave, onCancel }) {
         </div>
         <div className="field">
           <label>Category</label>
-          <select value={f.cat} onChange={e=>set("cat",e.target.value)} style={{background:"var(--bg3)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 14px",color:"var(--text)",fontSize:"0.875rem",fontFamily:"DM Sans,sans-serif",outline:"none"}}>
+          <select value={isOther ? "Other" : f.cat} onChange={e=>{if(e.target.value==="Other")set("cat","");else set("cat",e.target.value);}} style={{background:"var(--bg3)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 14px",color:"var(--text)",fontSize:"0.875rem",fontFamily:"DM Sans,sans-serif",outline:"none"}}>
             {Object.keys(CAT_MAP).map(c=><option key={c} value={c}>{c}</option>)}
+            <option value="Other">Other…</option>
           </select>
+          {isOther && (
+            <input value={f.cat} onChange={e=>set("cat",e.target.value)}
+              placeholder="Type custom category…"
+              style={{marginTop:8,background:"var(--bg3)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 14px",color:"var(--text)",fontSize:"0.875rem",fontFamily:"DM Sans,sans-serif",outline:"none",width:"100%"}}/>
+          )}
         </div>
         <div className="field">
           <label>GitHub URL</label>
@@ -440,7 +448,7 @@ function ProjectModal({ project, onClose }) {
     return () => document.removeEventListener("keydown", esc);
   }, [onClose]);
 
-  const cat = CAT_MAP[project.cat] || {label:project.cat, cls:""};
+  const cat = CAT_MAP[project.cat] || {label:project.cat, cls:"cat-other"};
 
   return (
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
