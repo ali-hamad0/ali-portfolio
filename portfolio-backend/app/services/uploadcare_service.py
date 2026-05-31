@@ -15,7 +15,7 @@ def upload_file(file_bytes: bytes, filename: str) -> dict:
         )
         r.raise_for_status()
         file_id = r.json()["file"]
-    url = f"https://ucarecdn.com/{file_id}/-/preview/"
+    url = f"https://4cbdj8k4bb.ucarecd.net/{file_id}/-/preview/"
     return {"url": url, "public_id": file_id, "type": "video" if is_video else "image"}
 
 def delete_file(public_id: str, **kwargs):
