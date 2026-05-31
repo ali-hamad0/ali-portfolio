@@ -530,9 +530,10 @@ export default function App() {
 
   const saveProject = async p => {
     try {
-      let saved;
-      if(p.id) { saved = await api.updateProject(p.id, p); }
-      else { saved = await api.createProject(p); }
+      // only use PUT if id is a real backend integer (not a Date.now() temp id)
+      const isBackendId = p.id && Number.isInteger(p.id) && p.id < 1_000_000_000_000;
+      if(isBackendId) { await api.updateProject(p.id, p); }
+      else { await api.createProject(p); }
       const updated = await api.getProjects();
       if(Array.isArray(updated)) setProjects(updated);
       setEditingProj(null); setAddingProj(false); showToast("Project saved ✓");
