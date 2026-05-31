@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import * as api from "./api.js";
 
 const FONT_STYLE = `
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
@@ -487,7 +488,7 @@ function ProjectModal({ project, onClose }) {
 
 // ── MAIN APP
 export default function App() {
-  const [projects, setProjects]   = useState(INITIAL_PROJECTS);
+  const [projects, setProjects]   = useState([]);
   const [skills,   setSkills]     = useState(INITIAL_SKILLS);
   const [bio, setBio] = useState({
     name:"Ali Hamad", title:"AI & Software Engineer",
@@ -499,7 +500,7 @@ export default function App() {
   });
   const [selected,      setSelected]      = useState(null);
   const [adminOpen,     setAdminOpen]     = useState(false);
-  const [loggedIn,      setLoggedIn]      = useState(false);
+  const [loggedIn,      setLoggedIn]      = useState(api.hasToken());
   const [pwd,           setPwd]           = useState("");
   const [loginErr,      setLoginErr]      = useState("");
   const [adminTab,      setAdminTab]      = useState("projects");
@@ -508,12 +509,67 @@ export default function App() {
   const [toast,         setToast]         = useState({show:false,msg:""});
 
   const showToast = msg => { setToast({show:true,msg}); setTimeout(()=>setToast({show:false,msg:""}),2600); };
-  const login = () => { if(pwd===ADMIN_PWD){setLoggedIn(true);setLoginErr("");}else setLoginErr("Incorrect password."); };
-  const saveProject = p => {
-    setProjects(ps=>{ const i=ps.findIndex(x=>x.id===p.id); if(i>=0){const n=[...ps];n[i]=p;return n;} return [p,...ps]; });
-    setEditingProj(null); setAddingProj(false); showToast("Project saved ✓");
+
+  // Load data from backend on mount
+  useEffect(() => {
+    api.getProjects().then(data => { if(Array.isArray(data)) setProjects(data); }).catch(()=>{});
+    api.getSkills().then(data => { if(Array.isArray(data)) setSkills(data); }).catch(()=>{});
+    api.getBio().then(data => { if(data && data.name) setBio(data); }).catch(()=>{});
+  }, []);
+
+  const login = async () => {
+    try {
+      await api.login(pwd);
+      setLoggedIn(true); setLoginErr("");
+    } catch {
+      setLoginErr("Incorrect password.");
+    }
   };
-  const delProject = id => { setProjects(ps=>ps.filter(p=>p.id!==id)); showToast("Deleted"); };
+
+  const saveProject = async p => {
+    try {
+      let saved;
+      if(p.id) { saved = await api.updateProject(p.id, p); }
+      else { saved = await api.createProject(p); }
+      const updated = await api.getProjects();
+      if(Array.isArray(updated)) setProjects(updated);
+      setEditingProj(null); setAddingProj(false); showToast("Project saved ✓");
+    } catch { showToast("Error saving project"); }
+  };
+
+  const delProject = async id => {
+    try {
+      await api.deleteProject(id);
+      setProjects(ps=>ps.filter(p=>p.id!==id)); showToast("Deleted");
+    } catch { showToast("Error deleting project"); }
+  };
+
+  const saveBio = async () => {
+    try {
+      await api.saveBio(bio); showToast("Bio saved ✓");
+    } catch { showToast("Error saving bio"); }
+  };
+
+  const saveSkills = async () => {
+    try {
+      await api.saveSkills(skills); showToast("Skills saved ✓");
+    } catch { showToast("Error saving skills"); }
+  };
+
+  const handlePortraitUpload = async (file) => {
+    try {
+      const data = await api.uploadPortrait(file);
+      setBio(b=>({...b, portrait: data.url || data.src || data.portrait || ""}));
+      showToast("Portrait uploaded ✓");
+    } catch { showToast("Error uploading portrait"); }
+  };
+
+  const handlePortraitRemove = async () => {
+    try {
+      await api.removePortrait();
+      setBio(b=>({...b, portrait:""})); showToast("Portrait removed");
+    } catch { showToast("Error removing portrait"); }
+  };
 
   return (
     <>
@@ -730,7 +786,7 @@ export default function App() {
                     onClick={()=>setSkills(s=>[...s,{category:"New Category",items:[]}])}>
                     <PlusIcon/> Add Category
                   </button>
-                  <button className="btn-save" style={{marginTop:4}} onClick={()=>showToast("Skills saved ✓")}>Save Skills</button>
+                  <button className="btn-save" style={{marginTop:4}} onClick={saveSkills}>Save Skills</button>
                 </div>
               )}
 
@@ -748,10 +804,10 @@ export default function App() {
                             Change photo
                             <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{
                               const f=e.target.files[0]; if(!f) return;
-                              const r=new FileReader(); r.onload=ev=>setBio(b=>({...b,portrait:ev.target.result})); r.readAsDataURL(f);
+                              handlePortraitUpload(f);
                             }}/>
                           </label>
-                          <button onClick={()=>setBio(b=>({...b,portrait:""}))}
+                          <button onClick={handlePortraitRemove}
                             style={{padding:"6px 14px",borderRadius:7,background:"rgba(255,92,92,0.1)",border:"1px solid var(--danger)",color:"var(--danger)",cursor:"pointer",fontSize:"0.8rem",fontFamily:"Syne,sans-serif",fontWeight:600}}>
                             Remove
                           </button>
@@ -764,7 +820,7 @@ export default function App() {
                         <div style={{fontSize:"0.74rem",opacity:.6}}>JPG, PNG, WEBP recommended</div>
                         <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{
                           const f=e.target.files[0]; if(!f) return;
-                          const r=new FileReader(); r.onload=ev=>setBio(b=>({...b,portrait:ev.target.result})); r.readAsDataURL(f);
+                          handlePortraitUpload(f);
                         }}/>
                       </label>
                     )}
@@ -788,7 +844,7 @@ export default function App() {
                       <input value={bio[k]} onChange={e=>setBio(b=>({...b,[k]:e.target.value}))}/>
                     </div>
                   ))}
-                  <button className="btn-save" style={{marginTop:4}} onClick={()=>showToast("Bio saved ✓")}>Save Bio</button>
+                  <button className="btn-save" style={{marginTop:4}} onClick={saveBio}>Save Bio</button>
                 </div>
               )}
             </div>
