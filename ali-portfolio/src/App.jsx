@@ -500,7 +500,8 @@ export default function App() {
   });
   const [selected,      setSelected]      = useState(null);
   const [adminOpen,     setAdminOpen]     = useState(false);
-  const [loggedIn,      setLoggedIn]      = useState(api.hasToken());
+  const [loggedIn,      setLoggedIn]      = useState(false);
+  useEffect(() => { api.clearToken(); }, []);
   const [pwd,           setPwd]           = useState("");
   const [loginErr,      setLoginErr]      = useState("");
   const [adminTab,      setAdminTab]      = useState("projects");
