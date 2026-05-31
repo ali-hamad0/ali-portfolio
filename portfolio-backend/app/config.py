@@ -10,9 +10,10 @@ class Settings(BaseSettings):
     UPLOADCARE_PUBLIC_KEY: str
     UPLOADCARE_SECRET_KEY: str
 
-    @field_validator("DATABASE_URL", mode="before")
+    @field_validator("DATABASE_URL", "ADMIN_PASSWORD", "JWT_SECRET",
+                     "UPLOADCARE_PUBLIC_KEY", "UPLOADCARE_SECRET_KEY", mode="before")
     @classmethod
-    def strip_database_url(cls, v: str) -> str:
+    def strip_strings(cls, v: str) -> str:
         return v.strip()
 
     class Config:
