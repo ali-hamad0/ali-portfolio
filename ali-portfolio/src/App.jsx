@@ -500,7 +500,7 @@ export default function App() {
   });
   const [selected,      setSelected]      = useState(null);
   const [adminOpen,     setAdminOpen]     = useState(false);
-  const [loggedIn,      setLoggedIn]      = useState(api.hasToken());
+  const [loggedIn,      setLoggedIn]      = useState(false);
   const [pwd,           setPwd]           = useState("");
   const [loginErr,      setLoginErr]      = useState("");
   const [adminTab,      setAdminTab]      = useState("projects");
@@ -519,10 +519,19 @@ export default function App() {
     }).catch(()=>{});
   }, []);
 
+  const logout = () => { api.clearToken(); setLoggedIn(false); setAdminOpen(false); };
+
+  // Auto-logout after 1 minute
+  useEffect(() => {
+    if (!loggedIn) return;
+    const timer = setTimeout(logout, 60 * 1000);
+    return () => clearTimeout(timer);
+  }, [loggedIn]);
+
   const login = async () => {
     try {
       await api.login(pwd);
-      setLoggedIn(true); setLoginErr("");
+      setLoggedIn(true); setLoginErr(""); setPwd("");
     } catch {
       setLoginErr("Incorrect password.");
     }
