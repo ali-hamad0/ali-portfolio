@@ -519,15 +519,6 @@ export default function App() {
     }).catch(()=>{});
   }, []);
 
-  const logout = () => { api.clearToken(); setLoggedIn(false); setAdminOpen(false); };
-
-  // Auto-logout after 1 minute
-  useEffect(() => {
-    if (!loggedIn) return;
-    const timer = setTimeout(logout, 60 * 1000);
-    return () => clearTimeout(timer);
-  }, [loggedIn]);
-
   const login = async () => {
     try {
       await api.login(pwd);
