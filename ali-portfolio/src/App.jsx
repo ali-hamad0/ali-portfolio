@@ -19,7 +19,7 @@ h1,h2,h3,h4,h5{font-family:'Syne',sans-serif}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:999px}
 
-/* ── Background texture */
+/* ── Background */
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");opacity:0.5}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -31,6 +31,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .orb1{width:800px;height:800px;background:radial-gradient(circle,rgba(34,211,238,0.065),transparent 70%);top:-250px;left:-200px}
 .orb2{width:600px;height:600px;background:radial-gradient(circle,rgba(129,140,248,0.065),transparent 70%);bottom:-150px;right:-150px}
 .orb3{width:450px;height:450px;background:radial-gradient(circle,rgba(244,114,182,0.04),transparent 70%);top:45%;left:50%;transform:translateX(-50%)}
+
+/* ── Scroll Progress */
+.scroll-prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));z-index:300;transition:width .08s linear;pointer-events:none;border-radius:0 2px 2px 0}
+
+/* ── Back to Top */
+.back-top{position:fixed;bottom:84px;right:24px;z-index:150;width:42px;height:42px;border-radius:12px;background:var(--bg3);border:1px solid var(--border2);color:var(--muted2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .28s cubic-bezier(0.16,1,0.3,1);opacity:0;transform:translateY(16px) scale(0.9);pointer-events:none;box-shadow:var(--shadow)}
+.back-top.vis{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.back-top:hover{background:var(--accent);color:#000;border-color:var(--accent);transform:translateY(-3px) scale(1)}
+@media(max-width:480px){.back-top{bottom:72px;right:16px}}
 
 /* ── Layout */
 .site-wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 28px}
@@ -49,13 +58,13 @@ nav.scrolled{background:rgba(7,7,15,0.92);border-bottom-color:var(--border)}
 .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px;letter-spacing:-0.02em}
 .logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:0.68rem;color:#000;font-weight:900;flex-shrink:0;letter-spacing:0}
 .nav-links{display:flex;align-items:center;gap:2px}
-.nav-links a{color:var(--muted2);font-size:0.83rem;text-decoration:none;transition:color .2s,background .2s;font-weight:500;padding:6px 14px;border-radius:8px;letter-spacing:0.01em}
+.nav-links a{color:var(--muted2);font-size:0.82rem;text-decoration:none;transition:color .2s,background .2s;font-weight:500;padding:6px 12px;border-radius:8px;letter-spacing:0.01em}
 .nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.04)}
 .nav-links a.active{color:var(--text);background:rgba(255,255,255,0.04)}
-.btn-admin{padding:7px 16px;border-radius:8px;font-size:0.77rem;font-weight:600;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--muted2);cursor:pointer;transition:all .2s;font-family:'Syne',sans-serif;letter-spacing:0.03em;margin-left:8px}
+.btn-admin{padding:7px 14px;border-radius:8px;font-size:0.76rem;font-weight:600;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--muted2);cursor:pointer;transition:all .2s;font-family:'Syne',sans-serif;letter-spacing:0.03em;margin-left:6px}
 .btn-admin:hover{background:var(--accent);color:#000;border-color:var(--accent)}
 .nav-mobile-menu{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:4px}
-@media(max-width:640px){
+@media(max-width:700px){
   .nav-links{display:none;position:fixed;top:68px;left:0;right:0;background:rgba(7,7,15,0.97);backdrop-filter:blur(28px);border-bottom:1px solid var(--border);flex-direction:column;padding:12px;gap:2px;z-index:99}
   .nav-links.open{display:flex}
   .nav-links a{padding:12px 16px;border-radius:10px;width:100%}
@@ -65,12 +74,16 @@ nav.scrolled{background:rgba(7,7,15,0.92);border-bottom-color:var(--border)}
 
 /* ── HERO */
 .hero{padding:118px 0 96px;position:relative}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:1px solid rgba(34,211,238,0.2);background:rgba(34,211,238,0.04);font-size:0.7rem;color:var(--accent);font-weight:600;margin-bottom:28px;letter-spacing:0.08em;text-transform:uppercase}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:1px solid rgba(34,211,238,0.2);background:rgba(34,211,238,0.04);font-size:0.7rem;color:var(--accent);font-weight:600;margin-bottom:24px;letter-spacing:0.08em;text-transform:uppercase}
 .hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 9px var(--accent);animation:dot-pulse 2s infinite}
 @keyframes dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.25;transform:scale(1.8)}}
-.hero h1{font-size:clamp(2.7rem,6.5vw,5rem);font-weight:800;line-height:1.01;letter-spacing:-0.04em;margin-bottom:20px}
+.hero h1{font-size:clamp(2.7rem,6.5vw,5rem);font-weight:800;line-height:1.01;letter-spacing:-0.04em;margin-bottom:10px}
 .hero h1 .grad{background:linear-gradient(108deg,var(--accent) 0%,var(--accent2) 50%,var(--accent3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:1.02rem;color:var(--muted2);max-width:500px;line-height:1.84;margin-bottom:40px;font-weight:400;letter-spacing:0.003em}
+.hero-typing{font-size:0.95rem;margin-bottom:18px;height:1.6em;display:flex;align-items:center;gap:0;font-weight:400;color:var(--muted2)}
+.typing-text{color:var(--accent2);font-family:'Syne',sans-serif;font-weight:600;font-size:0.95rem}
+.typing-cursor{color:var(--accent);animation:cur-blink 1s step-end infinite;margin-left:2px;font-weight:200;font-size:1.1rem;line-height:1}
+@keyframes cur-blink{0%,100%{opacity:1}50%{opacity:0}}
+.hero-sub{font-size:1rem;color:var(--muted2);max-width:500px;line-height:1.84;margin-bottom:40px;font-weight:400;letter-spacing:0.003em}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap}
 .hero-inner{display:flex;align-items:center;justify-content:space-between;gap:72px}
 .hero-text{flex:1;min-width:0}
@@ -84,7 +97,7 @@ nav.scrolled{background:rgba(7,7,15,0.92);border-bottom-color:var(--border)}
 .hero-photo-placeholder:hover{border-color:var(--accent)}
 .hero-photo-badge{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:7px 18px;border-radius:999px;background:var(--bg2);border:1px solid var(--border2);font-size:0.71rem;font-weight:700;font-family:'Syne',sans-serif;color:var(--text);letter-spacing:0.04em;box-shadow:var(--shadow)}
 .hero-stats{display:flex;gap:40px;margin-top:52px;padding-top:40px;border-top:1px solid var(--border)}
-.hero-stat-num{font-family:'Syne',sans-serif;font-size:1.65rem;font-weight:800;color:var(--text);line-height:1;letter-spacing:-0.03em}
+.hero-stat-num{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;color:var(--text);line-height:1;letter-spacing:-0.03em}
 .hero-stat-label{font-size:0.7rem;color:var(--muted2);margin-top:5px;letter-spacing:0.025em;font-weight:400}
 @media(max-width:860px){.hero-inner{gap:40px}.hero-photo,.hero-photo-placeholder{width:220px;height:272px}}
 @media(max-width:680px){
@@ -94,6 +107,7 @@ nav.scrolled{background:rgba(7,7,15,0.92);border-bottom-color:var(--border)}
   .hero-actions{justify-content:center}
   .hero-sub{margin-left:auto;margin-right:auto}
   .hero-stats{justify-content:center;gap:28px}
+  .hero-typing{justify-content:center}
 }
 
 /* ── Buttons */
@@ -110,6 +124,25 @@ nav.scrolled{background:rgba(7,7,15,0.92);border-bottom-color:var(--border)}
 .section-label{font-size:0.67rem;letter-spacing:0.16em;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:6px;opacity:0.9}
 .section-title{font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:800;letter-spacing:-0.03em;line-height:1.04}
 .section-count{font-family:'Syne',sans-serif;font-size:0.77rem;color:var(--muted2);background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:4px 14px;border-radius:999px;white-space:nowrap;align-self:flex-start;margin-top:6px}
+.sub-label{font-size:0.67rem;letter-spacing:0.16em;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:14px;opacity:0.9}
+
+/* ── ABOUT */
+.about-layout{display:grid;grid-template-columns:1fr 320px;gap:56px;align-items:start}
+@media(max-width:900px){.about-layout{grid-template-columns:1fr;gap:36px}}
+.about-body p{font-size:0.94rem;color:var(--muted2);line-height:1.92;margin-bottom:20px;font-weight:400}
+.about-body p strong{color:var(--text);font-weight:600}
+.about-body p:last-of-type{margin-bottom:0}
+.strength-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.s-pill{padding:7px 16px;border-radius:999px;font-size:0.76rem;font-weight:600;font-family:'Syne',sans-serif;border:1px solid var(--border2);color:var(--muted2);background:rgba(255,255,255,0.03);letter-spacing:0.02em;transition:all .2s;cursor:default}
+.s-pill:hover{color:var(--text);border-color:rgba(255,255,255,0.18)}
+.s-pill.hi{border-color:rgba(34,211,238,0.22);color:var(--accent);background:rgba(34,211,238,0.05)}
+.about-cards{display:flex;flex-direction:column;gap:10px}
+.a-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;transition:border-color .25s,transform .28s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden}
+.a-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0.45}
+.a-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.a-card-icon{font-size:1.3rem;margin-bottom:8px;line-height:1}
+.a-card-title{font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-0.01em}
+.a-card-sub{font-size:0.76rem;color:var(--muted2);line-height:1.55}
 
 /* ── Project filter */
 .proj-filter{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:28px}
@@ -123,9 +156,11 @@ nav.scrolled{background:rgba(7,7,15,0.92);border-bottom-color:var(--border)}
 
 /* ── Regular card */
 .proj-card{background:var(--bg2);border:1px solid var(--border);padding:26px;cursor:pointer;transition:transform .32s cubic-bezier(0.16,1,0.3,1),border-color .32s,box-shadow .32s;position:relative;border-radius:var(--card-r);overflow:hidden}
+.proj-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(34,211,238,0.035),rgba(129,140,248,0.02));opacity:0;transition:opacity .32s;pointer-events:none}
 .proj-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 20px 56px rgba(0,0,0,0.5)}
+.proj-card:hover::after{opacity:1}
 
-/* ── Featured card — full-width, 2-panel */
+/* ── Featured card */
 .proj-card.is-featured{grid-column:1/-1;display:grid;grid-template-columns:1fr 220px;padding:0;min-height:230px}
 .feat-main{padding:34px 38px;display:flex;flex-direction:column;justify-content:center}
 .feat-side{position:relative;border-left:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bg3) 0%,var(--bg4) 100%)}
@@ -154,6 +189,7 @@ nav.scrolled{background:rgba(7,7,15,0.92);border-bottom-color:var(--border)}
 .proj-tag{padding:3px 9px;border-radius:6px;font-size:0.66rem;font-weight:500;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--muted2)}
 .proj-arrow{color:var(--border2);transition:all .32s;flex-shrink:0;margin-top:2px}
 .proj-card:hover .proj-arrow{color:var(--accent);transform:translate(4px,-2px)}
+.feat-view-link{display:inline-flex;align-items:center;gap:6px;margin-top:20px;color:var(--accent);font-size:0.8rem;font-weight:600;font-family:'Syne',sans-serif;letter-spacing:0.03em}
 
 /* ── Cat colors */
 .cat-saas{background:rgba(34,211,238,0.08);color:#22d3ee}
@@ -202,36 +238,23 @@ nav.scrolled{background:rgba(7,7,15,0.92);border-bottom-color:var(--border)}
 .skill-chip{padding:5px 12px;border-radius:7px;font-size:0.72rem;font-weight:500;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--muted2);transition:all .2s;cursor:default}
 .skill-chip:hover{color:var(--text);border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.05)}
 
-/* ── Contact */
-.contact-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-@media(max-width:480px){.contact-row{grid-template-columns:1fr}}
-.contact-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;align-items:center;gap:16px;text-decoration:none;color:var(--text);transition:all .3s cubic-bezier(0.16,1,0.3,1)}
-.contact-card:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-3px);box-shadow:0 14px 42px rgba(0,0,0,0.38)}
-.contact-icon{width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,0.03);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;transition:all .25s}
-.contact-card:hover .contact-icon{background:rgba(34,211,238,0.07);border-color:rgba(34,211,238,0.2)}
-.contact-label{font-size:0.67rem;color:var(--muted2);margin-bottom:3px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600}
-.contact-value{font-weight:600;font-size:0.85rem;font-family:'Syne',sans-serif;letter-spacing:-0.01em}
+/* ── Experience Timeline */
+.tl-wrap{position:relative;padding-left:56px}
+.tl-wrap::before{content:'';position:absolute;left:18px;top:10px;bottom:10px;width:1px;background:linear-gradient(to bottom,var(--accent),rgba(34,211,238,0.05))}
+.tl-item{position:relative;margin-bottom:28px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-46px;top:6px;width:36px;height:36px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--muted2);transition:border-color .25s,color .25s,box-shadow .25s}
+.tl-item:hover .tl-dot{border-color:var(--accent);color:var(--accent);box-shadow:0 0 14px rgba(34,211,238,0.2)}
+.tl-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-r);padding:24px 28px;transition:border-color .28s,transform .3s cubic-bezier(0.16,1,0.3,1)}
+.tl-item:hover .tl-card{border-color:var(--border2);transform:translateX(4px)}
+.tl-company-badge{display:inline-flex;align-items:center;gap:7px;padding:3px 12px;border-radius:999px;font-size:0.65rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:0.05em;text-transform:uppercase;border:1px solid var(--border2);color:var(--muted2);background:rgba(255,255,255,0.03);margin-bottom:12px}
+.tl-role{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);line-height:1.3;letter-spacing:-0.015em;margin-bottom:5px}
+.tl-period{font-size:0.73rem;color:var(--accent);font-weight:600;font-family:'Syne',sans-serif;letter-spacing:0.03em;opacity:0.9}
+.tl-bullets{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:9px}
+.tl-bullets li{font-size:0.82rem;color:var(--muted2);line-height:1.74;padding-left:16px;position:relative}
+.tl-bullets li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:0.5}
+@media(max-width:600px){.tl-wrap{padding-left:0}.tl-wrap::before,.tl-dot{display:none}}
 
-/* ── Footer */
-footer{border-top:1px solid var(--border);padding:32px 0;margin-top:48px}
-.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.footer-copy{color:var(--muted);font-size:0.78rem}
-.footer-links{display:flex;gap:20px}
-.footer-links a{color:var(--muted);font-size:0.78rem;text-decoration:none;transition:color .2s}
-.footer-links a:hover{color:var(--accent)}
-
-/* ── Experience */
-.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:700px){.exp-grid{grid-template-columns:1fr}}
-.exp-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-r);padding:28px;transition:border-color .28s,transform .3s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden}
-.exp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0.55}
-.exp-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.exp-company{display:inline-flex;align-items:center;gap:7px;padding:4px 13px;border-radius:999px;font-size:0.66rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:0.05em;text-transform:uppercase;border:1px solid var(--border2);color:var(--muted2);background:rgba(255,255,255,0.03);margin-bottom:14px}
-.exp-role{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);line-height:1.3;letter-spacing:-0.015em;margin-bottom:6px}
-.exp-period{font-size:0.74rem;color:var(--accent);font-weight:600;font-family:'Syne',sans-serif;letter-spacing:0.03em;opacity:0.9}
-.exp-bullets{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:10px}
-.exp-bullets li{font-size:0.82rem;color:var(--muted2);line-height:1.74;padding-left:16px;position:relative}
-.exp-bullets li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:0.55}
 /* ── Education */
 .edu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:28px}
 .edu-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;transition:border-color .25s,transform .28s cubic-bezier(0.16,1,0.3,1)}
@@ -242,6 +265,29 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:48px}
 .lang-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
 .lang-chip{padding:7px 16px;border-radius:999px;background:var(--bg2);border:1px solid var(--border);font-size:0.78rem;color:var(--muted2);font-weight:400;display:inline-flex;align-items:center;gap:6px}
 .lang-chip strong{color:var(--text);font-family:'Syne',sans-serif;font-size:0.77rem;font-weight:700}
+
+/* ── Contact */
+.contact-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+@media(max-width:480px){.contact-row{grid-template-columns:1fr}}
+.contact-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;align-items:center;gap:16px;text-decoration:none;color:var(--text);transition:all .3s cubic-bezier(0.16,1,0.3,1)}
+.contact-card:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-3px);box-shadow:0 14px 42px rgba(0,0,0,0.38)}
+.contact-icon{width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,0.03);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;transition:all .25s}
+.contact-card:hover .contact-icon{background:rgba(34,211,238,0.07);border-color:rgba(34,211,238,0.2)}
+.contact-label{font-size:0.67rem;color:var(--muted2);margin-bottom:3px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600}
+.contact-value{font-weight:600;font-size:0.85rem;font-family:'Syne',sans-serif;letter-spacing:-0.01em}
+.contact-cta{margin-top:36px;padding:28px 32px;background:var(--bg2);border:1px solid var(--border);border-radius:18px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.contact-cta-text h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:5px;letter-spacing:-0.02em}
+.contact-cta-text p{font-size:0.85rem;color:var(--muted2);line-height:1.6}
+@media(max-width:600px){.contact-cta{flex-direction:column;text-align:center;align-items:center}}
+
+/* ── Footer */
+footer{border-top:1px solid var(--border);padding:32px 0;margin-top:48px}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-copy{color:var(--muted);font-size:0.78rem}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--muted);font-size:0.78rem;text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--accent)}
+
 /* ── Admin */
 .admin-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:16px}
 .admin-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:840px;max-height:92vh;overflow-y:auto;padding:32px;position:relative}
@@ -316,6 +362,11 @@ const ArrowRight = () => (
     <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
   </svg>
 );
+const ArrowUp = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+  </svg>
+);
 const UploadIcon = () => (
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -367,9 +418,6 @@ const CAT_MAP = {
   "Game Dev":{ label:"Game Dev",  cls:"cat-gamedev" },
 };
 
-// ── INITIAL DATA (fallback if API unavailable)
-const INITIAL_PROJECTS = [];
-
 const INITIAL_SKILLS = [
   { category:"Agents & LLMs",  items:["LangGraph","LangChain","RAG","Tool Calling","NeMo Guardrails","LangSmith"] },
   { category:"ML / DL",        items:["PyTorch","TensorFlow","scikit-learn","Transformers","ONNX Runtime","MLflow"] },
@@ -395,7 +443,7 @@ const EXPERIENCE = [
     company: "Self-employed",
     period: "2025 – Present",
     bullets: [
-      "Delivered Albert, a multi-tenant AI SaaS with Postgres RLS, NeMo Guardrails, and ONNX serving.",
+      "Delivered Albert — a multi-tenant AI SaaS with Postgres RLS, NeMo Guardrails, and ONNX serving.",
       "Consulted on LLM integration and agentic workflow design for early-stage Lebanese startups.",
       "Implemented RAG pipelines, document classifiers, and REST APIs for client projects.",
     ],
@@ -403,16 +451,8 @@ const EXPERIENCE = [
 ];
 
 const EDUCATION = [
-  {
-    degree: "BSc Computer Science",
-    institution: "Lebanese International University",
-    period: "Expected June 2026",
-  },
-  {
-    degree: "AI Engineering Bootcamp",
-    institution: "SE Factory",
-    period: "2025",
-  },
+  { degree: "BSc Computer Science", institution: "Lebanese International University", period: "Expected June 2026" },
+  { degree: "AI Engineering Bootcamp", institution: "SE Factory", period: "2025" },
 ];
 
 const LANGUAGES = [
@@ -420,6 +460,63 @@ const LANGUAGES = [
   { lang: "Arabic",  level: "Native" },
   { lang: "French",  level: "French-educated" },
 ];
+
+const TYPING_PHRASES = [
+  "Multi-Agent Systems Builder",
+  "RAG & LLM Specialist",
+  "MLOps Engineer",
+  "LangGraph Architect",
+  "Full-Stack AI Developer",
+];
+
+const ABOUT_CARDS = [
+  { icon:"⚡", title:"Eval-Driven Development", sub:"CI eval gates, LangSmith traces, and measurable benchmarks — every system is tested before it ships." },
+  { icon:"🚀", title:"Production-Ready Systems", sub:"Containerized, monitored, and deployed. I build for production, not just notebooks." },
+  { icon:"🔗", title:"End-to-End Ownership", sub:"From data collection and model training to API design and frontend integration." },
+];
+
+// ── HOOKS
+function useTypingEffect(phrases) {
+  const [text, setText] = useState("");
+  const [idx, setIdx] = useState(0);
+  const [dir, setDir] = useState(1);
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    const current = phrases[idx % phrases.length];
+    if (paused) {
+      const t = setTimeout(() => { setPaused(false); setDir(-1); }, 1800);
+      return () => clearTimeout(t);
+    }
+    if (dir === 1) {
+      if (text.length < current.length) {
+        const t = setTimeout(() => setText(current.slice(0, text.length + 1)), 68);
+        return () => clearTimeout(t);
+      } else { setPaused(true); }
+    } else {
+      if (text.length > 0) {
+        const t = setTimeout(() => setText(text.slice(0, -1)), 36);
+        return () => clearTimeout(t);
+      } else { setDir(1); setIdx(i => i + 1); }
+    }
+  }, [text, dir, paused, idx, phrases]);
+  return text;
+}
+
+function useCounter(target, duration, active) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!active || !target) return;
+    const start = performance.now();
+    const step = now => {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      setVal(Math.round(ease * target));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [active, target, duration]);
+  return val;
+}
 
 // ── TAG INPUT
 function TagInput({ value, onChange }) {
@@ -515,8 +612,7 @@ function ProjectForm({ project, onSave, onCancel }) {
             <option value="Other">Other…</option>
           </select>
           {isOther && (
-            <input value={f.cat} onChange={e=>set("cat",e.target.value)}
-              placeholder="Type custom category…"
+            <input value={f.cat} onChange={e=>set("cat",e.target.value)} placeholder="Type custom category…"
               style={{marginTop:8,background:"var(--bg3)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 14px",color:"var(--text)",fontSize:"0.875rem",fontFamily:"Inter,sans-serif",outline:"none",width:"100%"}}/>
           )}
         </div>
@@ -564,9 +660,7 @@ function ProjectModal({ project, onClose }) {
     document.addEventListener("keydown", esc);
     return () => document.removeEventListener("keydown", esc);
   }, [onClose]);
-
   const cat = CAT_MAP[project.cat] || {label:project.cat, cls:"cat-other"};
-
   return (
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal-box">
@@ -618,54 +712,72 @@ export default function App() {
     email:"alimufidhamad0000@gmail.com",
     github:"https://github.com/ali-hamad0",
     linkedin:"https://linkedin.com/in/ali-hamad0",
-    cvUrl:"#",
-    portrait:"",
+    cvUrl:"#", portrait:"",
   });
-  const [selected,      setSelected]      = useState(null);
-  const [adminOpen,     setAdminOpen]     = useState(false);
-  const [loggedIn,      setLoggedIn]      = useState(false);
+  const [selected,    setSelected]    = useState(null);
+  const [adminOpen,   setAdminOpen]   = useState(false);
+  const [loggedIn,    setLoggedIn]    = useState(false);
   useEffect(() => { api.clearToken(); }, []);
-  const [pwd,           setPwd]           = useState("");
-  const [loginErr,      setLoginErr]      = useState("");
-  const [adminTab,      setAdminTab]      = useState("projects");
-  const [editingProj,   setEditingProj]   = useState(null);
-  const [addingProj,    setAddingProj]    = useState(false);
-  const [toast,         setToast]         = useState({show:false,msg:""});
-  const [mobileMenu,    setMobileMenu]    = useState(false);
-  const [filterCat,     setFilterCat]     = useState("All");
-  const [navScrolled,   setNavScrolled]   = useState(false);
+  const [pwd,         setPwd]         = useState("");
+  const [loginErr,    setLoginErr]    = useState("");
+  const [adminTab,    setAdminTab]    = useState("projects");
+  const [editingProj, setEditingProj] = useState(null);
+  const [addingProj,  setAddingProj]  = useState(false);
+  const [toast,       setToast]       = useState({show:false,msg:""});
+  const [mobileMenu,  setMobileMenu]  = useState(false);
+  const [filterCat,   setFilterCat]   = useState("All");
+  const [navScrolled, setNavScrolled] = useState(false);
+  const [scrollPct,   setScrollPct]   = useState(0);
+  const [showBackTop, setShowBackTop] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [statsVisible,  setStatsVisible]  = useState(false);
+  const statsRef = useRef(null);
+  const typedText = useTypingEffect(TYPING_PHRASES);
 
   const showToast = msg => { setToast({show:true,msg}); setTimeout(()=>setToast({show:false,msg:""}),2600); };
 
-  // Load data from backend on mount
   useEffect(() => {
-    api.getProjects().then(data => { if(Array.isArray(data)) setProjects(data); }).catch(()=>{});
-    api.getSkills().then(data => { if(Array.isArray(data)) setSkills(data); }).catch(()=>{});
-    api.getBio().then(data => {
-      if(data && data.name) setBio({...data, cvUrl: data.cv_url || "#"});
-    }).catch(()=>{});
+    api.getProjects().then(d => { if(Array.isArray(d)) setProjects(d); }).catch(()=>{});
+    api.getSkills().then(d => { if(Array.isArray(d)) setSkills(d); }).catch(()=>{});
+    api.getBio().then(d => { if(d?.name) setBio({...d, cvUrl: d.cv_url||"#"}); }).catch(()=>{});
   }, []);
 
-  // Nav scroll state
+  // Combined scroll listener
   useEffect(() => {
-    const onScroll = () => setNavScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      const el = document.documentElement;
+      const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+      setScrollPct(pct || 0);
+      setNavScrolled(window.scrollY > 24);
+      setShowBackTop(window.scrollY > 300);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Stats counter trigger
+  useEffect(() => {
+    if (!statsRef.current) return;
+    const io = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setStatsVisible(true); io.disconnect(); } },
+      { threshold: 0.4 }
+    );
+    io.observe(statsRef.current);
+    return () => io.disconnect();
+  }, [projects.length]);
+
   // Active section tracking
   useEffect(() => {
-    const sections = ["projects","experience","skills","contact"];
+    const ids = ["about","projects","experience","skills","contact"];
     const io = new IntersectionObserver(
       entries => entries.forEach(e => { if(e.isIntersecting) setActiveSection(e.target.id); }),
       { rootMargin: "-40% 0px -55% 0px" }
     );
-    sections.forEach(id => { const el = document.getElementById(id); if(el) io.observe(el); });
+    ids.forEach(id => { const el = document.getElementById(id); if(el) io.observe(el); });
     return () => io.disconnect();
   }, []);
 
-  // Scroll reveal animations — re-runs when data loads so new cards are observed
+  // Scroll reveal
   useEffect(() => {
     const io = new IntersectionObserver(
       entries => entries.forEach(e => {
@@ -678,19 +790,15 @@ export default function App() {
   }, [projects.length, skills.length]);
 
   const login = async () => {
-    try {
-      await api.login(pwd);
-      setLoggedIn(true); setLoginErr(""); setPwd("");
-    } catch {
-      setLoginErr("Incorrect password.");
-    }
+    try { await api.login(pwd); setLoggedIn(true); setLoginErr(""); setPwd(""); }
+    catch { setLoginErr("Incorrect password."); }
   };
 
   const saveProject = async p => {
     try {
       const isBackendId = p.id && Number.isInteger(p.id) && p.id < 1_000_000_000_000;
-      if(isBackendId) { await api.updateProject(p.id, p); }
-      else { await api.createProject(p); }
+      if(isBackendId) await api.updateProject(p.id, p);
+      else await api.createProject(p);
       const updated = await api.getProjects();
       if(Array.isArray(updated)) setProjects(updated);
       setEditingProj(null); setAddingProj(false); showToast("Project saved ✓");
@@ -698,67 +806,63 @@ export default function App() {
   };
 
   const delProject = async id => {
-    try {
-      await api.deleteProject(id);
-      setProjects(ps=>ps.filter(p=>p.id!==id)); showToast("Deleted");
-    } catch { showToast("Error deleting project"); }
+    try { await api.deleteProject(id); setProjects(ps=>ps.filter(p=>p.id!==id)); showToast("Deleted"); }
+    catch { showToast("Error deleting project"); }
   };
 
   const saveBio = async () => {
     try {
       const payload = { name:bio.name, title:bio.title, email:bio.email, github:bio.github, linkedin:bio.linkedin, cv_url:bio.cvUrl||"" };
       const data = await api.saveBio(payload);
-      setBio({...data, cvUrl: data.cv_url || "#"});
-      showToast("Bio saved ✓");
+      setBio({...data, cvUrl: data.cv_url||"#"}); showToast("Bio saved ✓");
     } catch { showToast("Error saving bio"); }
   };
 
   const saveSkills = async () => {
-    try {
-      await api.saveSkills(skills); showToast("Skills saved ✓");
-    } catch { showToast("Error saving skills"); }
+    try { await api.saveSkills(skills); showToast("Skills saved ✓"); }
+    catch { showToast("Error saving skills"); }
   };
 
   const handlePortraitUpload = async (file) => {
-    try {
-      const data = await api.uploadPortrait(file);
-      setBio(b=>({...b, portrait: data.portrait || ""}));
-      showToast("Portrait uploaded ✓");
-    } catch { showToast("Error uploading portrait"); }
+    try { const data = await api.uploadPortrait(file); setBio(b=>({...b, portrait: data.portrait||""})); showToast("Portrait uploaded ✓"); }
+    catch { showToast("Error uploading portrait"); }
   };
 
   const handlePortraitRemove = async () => {
-    try {
-      const data = await api.removePortrait();
-      setBio(b=>({...b, portrait: data.portrait || ""}));
-      showToast("Portrait removed");
-    } catch { showToast("Error removing portrait"); }
+    try { const data = await api.removePortrait(); setBio(b=>({...b, portrait: data.portrait||""})); showToast("Portrait removed"); }
+    catch { showToast("Error removing portrait"); }
   };
 
   const cats = ["All", ...Array.from(new Set(projects.map(p=>p.cat)))];
   const filteredProjects = filterCat==="All" ? projects : projects.filter(p=>p.cat===filterCat);
   const techCount = skills.reduce((acc,s)=>acc+s.items.length, 0);
 
-  // Featured decoration bars (random-ish widths for visual interest)
+  const projCount  = useCounter(projects.length, 1200, statsVisible);
+  const techCnt    = useCounter(techCount, 1200, statsVisible);
+
   const FEAT_BARS = [72,48,90,55,38,82,60,44,96,52,70,36];
 
   return (
     <>
       <style>{FONT_STYLE}</style>
+
+      {/* Scroll progress */}
+      <div className="scroll-prog" style={{width:`${scrollPct}%`}}/>
+
       <div className="orb orb1"/><div className="orb orb2"/><div className="orb orb3"/>
 
       {/* ── NAV */}
-      <nav className={navScrolled ? "scrolled" : ""}>
+      <nav className={navScrolled?"scrolled":""}>
         <div className="nav-inner">
           <a href="#" className="nav-logo">
-            <div className="logo-mark">AH</div>
-            Ali Hamad
+            <div className="logo-mark">AH</div>Ali Hamad
           </a>
           <div className={`nav-links${mobileMenu?" open":""}`} onClick={()=>setMobileMenu(false)}>
+            <a href="#about"      className={activeSection==="about"?"active":""}>About</a>
             <a href="#projects"   className={activeSection==="projects"?"active":""}>Projects</a>
             <a href="#experience" className={activeSection==="experience"?"active":""}>Experience</a>
-            <a href="#skills"    className={activeSection==="skills"?"active":""}>Skills</a>
-            <a href="#contact"   className={activeSection==="contact"?"active":""}>Contact</a>
+            <a href="#skills"     className={activeSection==="skills"?"active":""}>Skills</a>
+            <a href="#contact"    className={activeSection==="contact"?"active":""}>Contact</a>
             <button className="btn-admin" onClick={e=>{e.stopPropagation();setAdminOpen(true);setMobileMenu(false);}}>
               ⚙ Admin
             </button>
@@ -780,13 +884,14 @@ export default function App() {
           <div className="hero-inner">
             <div className="hero-text">
               <div className="hero-tag reveal">Available for opportunities</div>
-              <h1 className="reveal rd1">
-                AI & Software<br/>
-                <span className="grad">Engineer</span>
-              </h1>
+              <h1 className="reveal rd1">AI & Software<br/><span className="grad">Engineer</span></h1>
+              <div className="hero-typing reveal rd2">
+                <span className="typing-text">{typedText}</span>
+                <span className="typing-cursor">|</span>
+              </div>
               <p className="hero-sub reveal rd2">
                 Building production-grade intelligent systems — agentic pipelines,
-                fine-tuned models, RAG, and MLOps. Every decision backed by a number.
+                fine-tuned models, RAG, and MLOps. <strong style={{color:"var(--text)",fontWeight:600}}>Every decision backed by a number.</strong>
               </p>
               <div className="hero-actions reveal rd3">
                 <a href="#projects" className="btn-primary"><ArrowRight/> View Projects</a>
@@ -794,9 +899,9 @@ export default function App() {
                 <a href={bio.linkedin} target="_blank" rel="noreferrer" className="btn-outline"><LinkedinIcon/> LinkedIn</a>
                 <a href={bio.cvUrl} className="btn-outline">Download CV</a>
               </div>
-              <div className="hero-stats reveal rd4">
+              <div className="hero-stats reveal rd4" ref={statsRef}>
                 <div>
-                  <div className="hero-stat-num">{projects.length || "—"}</div>
+                  <div className="hero-stat-num">{statsVisible ? projCount : "—"}</div>
                   <div className="hero-stat-label">Projects Built</div>
                 </div>
                 <div>
@@ -804,25 +909,71 @@ export default function App() {
                   <div className="hero-stat-label">Years Experience</div>
                 </div>
                 <div>
-                  <div className="hero-stat-num">{techCount || "—"}</div>
+                  <div className="hero-stat-num">{statsVisible ? techCnt : "—"}</div>
                   <div className="hero-stat-label">Technologies</div>
                 </div>
               </div>
             </div>
-
             <div className="hero-photo-wrap reveal rd2">
               <div className="hero-photo-glow"/>
               {bio.portrait
                 ? <img src={bio.portrait} alt="Ali Hamad" className="hero-photo"/>
                 : <div className="hero-photo-placeholder" onClick={()=>setAdminOpen(true)}>
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" opacity="0.35">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                      <circle cx="12" cy="7" r="4"/>
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                     </svg>
                     <span>Add photo via Admin</span>
                   </div>
               }
               <div className="hero-photo-badge">{bio.name} · Lebanon 🇱🇧</div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── ABOUT */}
+        <section className="section" id="about">
+          <div className="section-header reveal">
+            <div>
+              <div className="section-label">About Me</div>
+              <h2 className="section-title">Building AI That Ships</h2>
+            </div>
+          </div>
+          <div className="about-layout">
+            <div className="about-body reveal rd1">
+              <p>
+                I'm <strong>Ali Hamad</strong>, an AI & Software Engineer from Lebanon with a focus on
+                production-grade intelligent systems. I design and ship fully-evaluated, containerized
+                AI applications — from <strong>multi-agent LangGraph pipelines</strong> and RAG architectures
+                to fine-tuned classifiers and MLOps stacks.
+              </p>
+              <p>
+                Every system I build is backed by measurable metrics: CI eval gates that block
+                regression, MLflow experiment tracking, LangSmith traces for latency profiling, and
+                drift detection with alerting. I don't just prototype — <strong>I engineer.</strong>
+              </p>
+              <p>
+                Currently completing my BSc in Computer Science at Lebanese International University
+                and a graduate of SE Factory's AI Engineering Bootcamp, where I shipped 8+ evaluated
+                production systems end-to-end. <strong>Open to AI engineering, agentic systems,
+                or MLOps roles globally.</strong>
+              </p>
+              <div className="strength-pills">
+                <span className="s-pill hi">LangGraph / Multi-Agent</span>
+                <span className="s-pill hi">RAG & Retrieval</span>
+                <span className="s-pill hi">Eval-Driven MLOps</span>
+                <span className="s-pill">FastAPI + Async Python</span>
+                <span className="s-pill">Full-Stack AI</span>
+                <span className="s-pill">Open to Relocation</span>
+              </div>
+            </div>
+            <div className="about-cards">
+              {ABOUT_CARDS.map((c,i)=>(
+                <div key={i} className={`a-card reveal rd${i+1}`}>
+                  <div className="a-card-icon">{c.icon}</div>
+                  <div className="a-card-title">{c.title}</div>
+                  <div className="a-card-sub">{c.sub}</div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -836,22 +987,16 @@ export default function App() {
             </div>
             <span className="section-count">{filteredProjects.length} / {projects.length}</span>
           </div>
-
           <div className="proj-filter reveal rd1">
             {cats.map(c=>(
-              <button key={c} className={`proj-filter-btn${filterCat===c?" active":""}`}
-                onClick={()=>setFilterCat(c)}>
-                {c}
-              </button>
+              <button key={c} className={`proj-filter-btn${filterCat===c?" active":""}`} onClick={()=>setFilterCat(c)}>{c}</button>
             ))}
           </div>
-
           <div className="projects-grid">
-            {filteredProjects.map((p, i) => {
+            {filteredProjects.map((p,i) => {
               const cat = CAT_MAP[p.cat] || {label:p.cat, cls:"cat-other"};
               const isFeatured = p.featured && filterCat === "All";
-              const delay = `rd${Math.min((i % 3) + 1, 6)}`;
-
+              const delay = `rd${Math.min((i%3)+1,6)}`;
               if (isFeatured) return (
                 <div key={p.id} className={`proj-card is-featured reveal ${delay}`} onClick={()=>setSelected(p)}>
                   <div className="feat-main">
@@ -865,20 +1010,15 @@ export default function App() {
                       {p.tags.slice(0,5).map(t=><span key={t} className="proj-tag">{t}</span>)}
                       {p.tags.length>5 && <span className="proj-tag">+{p.tags.length-5}</span>}
                     </div>
-                    <div style={{display:"flex",alignItems:"center",gap:6,marginTop:20,color:"var(--accent)",fontSize:"0.8rem",fontWeight:600,fontFamily:"Syne,sans-serif",letterSpacing:"0.03em"}}>
-                      View details <ArrowRight/>
-                    </div>
+                    <div className="feat-view-link"><ArrowRight/> View details</div>
                   </div>
                   <div className="feat-side">
                     <div className="feat-side-inner">
-                      {FEAT_BARS.map((w,j)=>(
-                        <span key={j} style={{width:w, opacity: 0.3 + (j%4)*0.18}}/>
-                      ))}
+                      {FEAT_BARS.map((w,j)=><span key={j} style={{width:w,opacity:0.3+(j%4)*0.18}}/>)}
                     </div>
                   </div>
                 </div>
               );
-
               return (
                 <div key={p.id} className={`proj-card reveal ${delay}`} onClick={()=>setSelected(p)}>
                   <div className="proj-card-inner">
@@ -910,25 +1050,28 @@ export default function App() {
               <h2 className="section-title">Experience</h2>
             </div>
           </div>
-
-          <div className="exp-grid" style={{marginBottom:52}}>
+          <div className="tl-wrap" style={{marginBottom:52}}>
             {EXPERIENCE.map((e,i)=>(
-              <div key={i} className={`exp-card reveal rd${i+1}`}>
-                <div className="exp-company"><BriefcaseIcon/>{e.company}</div>
-                <div className="exp-role">{e.role}</div>
-                <div className="exp-period">{e.period}</div>
-                <ul className="exp-bullets">
-                  {e.bullets.map((b,j)=><li key={j}>{b}</li>)}
-                </ul>
+              <div key={i} className={`tl-item reveal rd${i+1}`}>
+                <div className="tl-dot"><BriefcaseIcon/></div>
+                <div className="tl-card">
+                  <div className="tl-company-badge"><BriefcaseIcon/>{e.company}</div>
+                  <div className="tl-role">{e.role}</div>
+                  <div className="tl-period">{e.period}</div>
+                  <ul className="tl-bullets">
+                    {e.bullets.map((b,j)=><li key={j}>{b}</li>)}
+                  </ul>
+                </div>
               </div>
             ))}
           </div>
 
-          <div style={{marginBottom:20}} className="reveal">
-            <div className="section-label" style={{marginBottom:14}}>Education</div>
+          <div className="reveal">
+            <div className="sub-label">Education</div>
             <div className="edu-grid">
               {EDUCATION.map((e,i)=>(
                 <div key={i} className={`edu-card reveal rd${i+1}`}>
+                  <div style={{marginBottom:8,color:"var(--muted2)"}}><GraduationCapIcon/></div>
                   <div className="edu-degree">{e.degree}</div>
                   <div className="edu-inst">{e.institution}</div>
                   <div className="edu-period">{e.period}</div>
@@ -938,7 +1081,7 @@ export default function App() {
           </div>
 
           <div className="reveal rd1">
-            <div className="section-label" style={{marginBottom:14}}>Languages</div>
+            <div className="sub-label">Languages</div>
             <div className="lang-row">
               {LANGUAGES.map(l=>(
                 <span key={l.lang} className="lang-chip">
@@ -958,7 +1101,7 @@ export default function App() {
             </div>
           </div>
           <div className="skills-grid">
-            {skills.map((s, i)=>(
+            {skills.map((s,i)=>(
               <div key={s.category} className={`skill-cat reveal rd${Math.min((i%3)+1,6)}`}>
                 <div className="skill-cat-title">{s.category}</div>
                 <div className="skill-chips">
@@ -980,24 +1123,25 @@ export default function App() {
           <div className="contact-row">
             <a href={`mailto:${bio.email}`} className="contact-card reveal rd1">
               <div className="contact-icon"><MailIcon/></div>
-              <div>
-                <div className="contact-label">Email</div>
-                <div className="contact-value">{bio.email}</div>
-              </div>
+              <div><div className="contact-label">Email</div><div className="contact-value">{bio.email}</div></div>
             </a>
             <a href={bio.github} target="_blank" rel="noreferrer" className="contact-card reveal rd2">
               <div className="contact-icon"><GithubIcon size={20}/></div>
-              <div>
-                <div className="contact-label">GitHub</div>
-                <div className="contact-value">ali-hamad0</div>
-              </div>
+              <div><div className="contact-label">GitHub</div><div className="contact-value">ali-hamad0</div></div>
             </a>
             <a href={bio.linkedin} target="_blank" rel="noreferrer" className="contact-card reveal rd3">
               <div className="contact-icon"><LinkedinIcon/></div>
-              <div>
-                <div className="contact-label">LinkedIn</div>
-                <div className="contact-value">Connect</div>
-              </div>
+              <div><div className="contact-label">LinkedIn</div><div className="contact-value">Connect</div></div>
+            </a>
+          </div>
+          <div className="contact-cta reveal rd1">
+            <div className="contact-cta-text">
+              <h3>Open to new opportunities</h3>
+              <p>Looking for AI engineering, agentic systems, or MLOps roles globally. Fast response guaranteed.</p>
+            </div>
+            <a href={`mailto:${bio.email}?subject=Opportunity%20for%20Ali%20Hamad&body=Hi%20Ali%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect.`}
+              className="btn-primary">
+              <MailIcon/> Send a Message
             </a>
           </div>
         </section>
@@ -1019,6 +1163,11 @@ export default function App() {
 
       {/* ── PROJECT MODAL */}
       {selected && <ProjectModal project={selected} onClose={()=>setSelected(null)}/>}
+
+      {/* ── BACK TO TOP */}
+      <button className={`back-top${showBackTop?" vis":""}`} onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} aria-label="Back to top">
+        <ArrowUp/>
+      </button>
 
       {/* ── ADMIN */}
       {adminOpen && (
@@ -1051,14 +1200,11 @@ export default function App() {
                   </button>
                 ))}
               </div>
-
-              {/* PROJECTS TAB */}
               {adminTab==="projects" && (
                 <>
                   {!editingProj && !addingProj ? (
                     <>
-                      <button className="btn-primary" style={{marginBottom:16,padding:"9px 20px",fontSize:"0.85rem"}}
-                        onClick={()=>setAddingProj(true)}>
+                      <button className="btn-primary" style={{marginBottom:16,padding:"9px 20px",fontSize:"0.85rem"}} onClick={()=>setAddingProj(true)}>
                         <PlusIcon/> Add New Project
                       </button>
                       {projects.map(p=>(
@@ -1089,8 +1235,6 @@ export default function App() {
                   )}
                 </>
               )}
-
-              {/* SKILLS TAB */}
               {adminTab==="skills" && (
                 <div style={{display:"flex",flexDirection:"column",gap:14}}>
                   {skills.map((s,si)=>(
@@ -1119,27 +1263,19 @@ export default function App() {
                   <button className="btn-save" style={{marginTop:4}} onClick={saveSkills}>Save Skills</button>
                 </div>
               )}
-
               {adminTab==="bio" && (
                 <div style={{display:"flex",flexDirection:"column",gap:14}}>
                   <div className="field">
                     <label>Portrait Photo</label>
                     {bio.portrait ? (
                       <div>
-                        <img src={bio.portrait} alt="portrait"
-                          style={{width:120,height:148,objectFit:"cover",objectPosition:"center top",borderRadius:12,border:"1px solid var(--border2)",display:"block",marginBottom:10}}/>
+                        <img src={bio.portrait} alt="portrait" style={{width:120,height:148,objectFit:"cover",objectPosition:"center top",borderRadius:12,border:"1px solid var(--border2)",display:"block",marginBottom:10}}/>
                         <div style={{display:"flex",gap:8}}>
                           <label style={{padding:"6px 14px",borderRadius:7,background:"var(--bg3)",border:"1px solid var(--border2)",color:"var(--text)",cursor:"pointer",fontSize:"0.8rem",fontFamily:"Syne,sans-serif",fontWeight:600}}>
                             Change photo
-                            <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{
-                              const f=e.target.files[0]; if(!f) return;
-                              handlePortraitUpload(f);
-                            }}/>
+                            <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{const f=e.target.files[0];if(!f)return;handlePortraitUpload(f);}}/>
                           </label>
-                          <button onClick={handlePortraitRemove}
-                            style={{padding:"6px 14px",borderRadius:7,background:"rgba(248,113,113,0.08)",border:"1px solid var(--danger)",color:"var(--danger)",cursor:"pointer",fontSize:"0.8rem",fontFamily:"Syne,sans-serif",fontWeight:600}}>
-                            Remove
-                          </button>
+                          <button onClick={handlePortraitRemove} style={{padding:"6px 14px",borderRadius:7,background:"rgba(248,113,113,0.08)",border:"1px solid var(--danger)",color:"var(--danger)",cursor:"pointer",fontSize:"0.8rem",fontFamily:"Syne,sans-serif",fontWeight:600}}>Remove</button>
                         </div>
                       </div>
                     ) : (
@@ -1147,10 +1283,7 @@ export default function App() {
                         <UploadIcon/>
                         <div>Click to upload your portrait photo</div>
                         <div style={{fontSize:"0.74rem",opacity:.6}}>JPG, PNG, WEBP recommended</div>
-                        <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{
-                          const f=e.target.files[0]; if(!f) return;
-                          handlePortraitUpload(f);
-                        }}/>
+                        <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{const f=e.target.files[0];if(!f)return;handlePortraitUpload(f);}}/>
                       </label>
                     )}
                   </div>
@@ -1160,9 +1293,7 @@ export default function App() {
                       <input id="portrait-url-input" placeholder="https://…/your-photo.jpg"
                         style={{flex:1,background:"var(--bg3)",border:"1px solid var(--border)",borderRadius:8,padding:"10px 14px",color:"var(--text)",fontSize:"0.875rem",fontFamily:"Inter,sans-serif",outline:"none"}}/>
                       <button onClick={()=>{const v=document.getElementById("portrait-url-input").value.trim();if(v)setBio(b=>({...b,portrait:v}));}}
-                        style={{padding:"10px 18px",borderRadius:8,background:"var(--bg3)",border:"1px solid var(--border2)",color:"var(--text)",cursor:"pointer",fontSize:"0.85rem",fontFamily:"Syne,sans-serif",fontWeight:600}}>
-                        Use
-                      </button>
+                        style={{padding:"10px 18px",borderRadius:8,background:"var(--bg3)",border:"1px solid var(--border2)",color:"var(--text)",cursor:"pointer",fontSize:"0.85rem",fontFamily:"Syne,sans-serif",fontWeight:600}}>Use</button>
                     </div>
                   </div>
                   <div style={{height:1,background:"var(--border)",margin:"4px 0"}}/>
