@@ -1390,8 +1390,41 @@ export default function App() {
                             placeholder="Ali consistently delivered production-quality systems that surprised even senior engineers..."/>
                         </div>
                         <div className="field form-full">
-                          <label>Photo URL (optional — leave blank for initials avatar)</label>
-                          <input value={editingRec.avatar} onChange={e=>setEditingRec(r=>({...r,avatar:e.target.value}))} placeholder="https://…/photo.jpg"/>
+                          <label>Photo (optional — leave blank for initials avatar)</label>
+                          {editingRec.avatar ? (
+                            <div style={{display:"flex",alignItems:"center",gap:12,marginTop:4}}>
+                              <img src={editingRec.avatar} alt="avatar preview"
+                                style={{width:56,height:56,borderRadius:"50%",objectFit:"cover",border:"2px solid var(--border2)",flexShrink:0}}/>
+                              <div>
+                                <div style={{fontSize:"0.78rem",color:"var(--muted2)",marginBottom:6}}>Photo set</div>
+                                <button type="button" onClick={()=>setEditingRec(r=>({...r,avatar:""}))}
+                                  style={{padding:"5px 14px",borderRadius:7,background:"rgba(239,68,68,0.07)",border:"1px solid var(--danger)",color:"var(--danger)",cursor:"pointer",fontSize:"0.78rem",fontFamily:"Syne,sans-serif",fontWeight:600}}>
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{display:"flex",flexDirection:"column",gap:8,marginTop:4}}>
+                              <label className="media-drop" style={{cursor:"pointer",padding:"18px 24px"}}>
+                                <UploadIcon/>
+                                <div style={{fontSize:"0.82rem"}}>Click to upload photo</div>
+                                <div style={{fontSize:"0.72rem",opacity:.6}}>JPG, PNG, WEBP</div>
+                                <input type="file" accept="image/*" style={{display:"none"}}
+                                  onChange={async e=>{
+                                    const f=e.target.files[0]; if(!f) return;
+                                    try {
+                                      const d = await api.uploadRecAvatar(f);
+                                      setEditingRec(r=>({...r,avatar:d.url}));
+                                      showToast("Photo uploaded ✓");
+                                    } catch { showToast("Upload failed"); }
+                                  }}/>
+                              </label>
+                              <input value={editingRec.avatar}
+                                onChange={e=>setEditingRec(r=>({...r,avatar:e.target.value}))}
+                                placeholder="Or paste image URL…"
+                                style={{background:"var(--bg3)",border:"1px solid var(--border2)",borderRadius:8,padding:"9px 12px",color:"var(--text)",fontSize:"0.82rem",fontFamily:"Inter,sans-serif",outline:"none"}}/>
+                            </div>
+                          )}
                         </div>
                         <div className="field">
                           <label>Sort Order (lower = first)</label>

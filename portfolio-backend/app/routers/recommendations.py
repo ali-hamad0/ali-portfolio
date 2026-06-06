@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
+import uuid
 
 from app.database import get_db
 from app.auth import verify_token
 from app.models.recommendation import Recommendation
+from app.services.uploadcare_service import upload_file
 
 router = APIRouter()
 
@@ -23,6 +25,13 @@ def _out(r: Recommendation) -> dict:
         "institution": r.institution, "quote": r.quote,
         "avatar": r.avatar, "sort_order": r.sort_order,
     }
+
+@router.post("/upload-avatar", dependencies=[Depends(verify_token)])
+async def upload_avatar(file: UploadFile = File(...)):
+    data = await file.read()
+    fname = f"rec_avatar_{uuid.uuid4().hex[:8]}"
+    result = upload_file(data, fname)
+    return {"url": result["url"]}
 
 @router.get("/")
 async def list_recs(db: AsyncSession = Depends(get_db)):

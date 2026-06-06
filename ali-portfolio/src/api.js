@@ -94,6 +94,18 @@ export const deleteRecommendation = (id) =>
     method: "DELETE", headers: { Authorization: `Bearer ${_token}` },
   }).then(r => r.json());
 
+export async function uploadRecAvatar(file) {
+  const fd = new FormData();
+  fd.append("file", file);
+  const r = await fetch(`${BASE}/recommendations/upload-avatar`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${_token}` },
+    body: fd,
+  });
+  if (!r.ok) throw new Error("Upload failed");
+  return r.json();
+}
+
 // ── CONTENT (generic key/value sections)
 export const getContent = (key) =>
   fetch(`${BASE}/content/${key}`).then(r => r.json());
