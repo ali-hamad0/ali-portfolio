@@ -69,6 +69,31 @@ export const removeProjectMedia = (id) =>
     method: "DELETE", headers: { Authorization: `Bearer ${_token}` },
   }).then(r => r.json());
 
+// ── RECOMMENDATIONS
+export const getRecommendations = () =>
+  fetch(`${BASE}/recommendations/`).then(r => r.json());
+
+export const createRecommendation = async (body) => {
+  const r = await fetch(`${BASE}/recommendations/`, {
+    method: "POST", headers: authHeaders(), body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+};
+
+export const updateRecommendation = async (id, body) => {
+  const r = await fetch(`${BASE}/recommendations/${id}`, {
+    method: "PUT", headers: authHeaders(), body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+};
+
+export const deleteRecommendation = (id) =>
+  fetch(`${BASE}/recommendations/${id}`, {
+    method: "DELETE", headers: { Authorization: `Bearer ${_token}` },
+  }).then(r => r.json());
+
 // ── CONTENT (generic key/value sections)
 export const getContent = (key) =>
   fetch(`${BASE}/content/${key}`).then(r => r.json());

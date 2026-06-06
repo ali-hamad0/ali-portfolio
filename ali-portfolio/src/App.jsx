@@ -228,6 +228,21 @@ nav.scrolled{background:rgba(255,255,255,0.97);border-bottom-color:var(--border)
 .modal-tags{display:flex;flex-wrap:wrap;gap:7px}
 .modal-tag{padding:5px 13px;border-radius:7px;font-size:0.73rem;font-weight:500;background:var(--bg3);border:1px solid var(--border);color:var(--muted2)}
 
+/* ── Recommendations */
+.recs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:820px){.recs-grid{grid-template-columns:1fr}}
+.rec-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-r);padding:28px 28px 24px;transition:border-color .28s,transform .3s cubic-bezier(0.16,1,0.3,1),box-shadow .3s;box-shadow:0 2px 12px rgba(0,0,0,0.05);display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
+.rec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent2),var(--accent3));opacity:0.55}
+.rec-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,0.1)}
+.rec-qdeco{font-size:4rem;line-height:1;color:var(--accent2);font-family:'Syne',sans-serif;font-weight:800;opacity:0.12;position:absolute;top:14px;right:20px;letter-spacing:-0.06em;pointer-events:none;user-select:none}
+.rec-text{font-size:0.875rem;color:var(--muted2);line-height:1.88;font-style:italic;flex:1;position:relative;z-index:1}
+.rec-author{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.rec-avatar{width:46px;height:46px;border-radius:50%;flex-shrink:0;object-fit:cover;border:2px solid var(--border2)}
+.rec-avatar-init{width:46px;height:46px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:#fff;letter-spacing:0.02em}
+.rec-name{font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;line-height:1.2}
+.rec-role{font-size:0.74rem;color:var(--muted2);margin-top:3px;line-height:1.4}
+.rec-empty{text-align:center;padding:56px 24px;color:var(--muted);font-size:0.88rem}
+
 /* ── Skills */
 .skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
 @media(max-width:480px){.skills-grid{grid-template-columns:1fr 1fr;gap:10px}}
@@ -753,6 +768,10 @@ export default function App() {
   });
   const [heroData, setHeroData] = useState({ phrases: DEFAULT_TYPING_PHRASES, yearsExp: "3+" });
 
+  // ── Recommendations
+  const [recs,        setRecs]        = useState([]);
+  const [editingRec,  setEditingRec]  = useState(null);
+
   // ── Admin timeline editing state
   const [editingExp,  setEditingExp]  = useState(null);
   const [editingEdu,  setEditingEdu]  = useState(null);
@@ -770,6 +789,7 @@ export default function App() {
     api.getContent("languages").then(d  => { if(Array.isArray(d.value)) setLanguages(d.value);  }).catch(()=>{});
     api.getContent("about").then(d => { if(d.value?.paras) setAboutData(d.value); }).catch(()=>{});
     api.getContent("hero").then(d  => { if(d.value?.phrases) setHeroData(d.value); }).catch(()=>{});
+    api.getRecommendations().then(d => { if(Array.isArray(d)) setRecs(d); }).catch(()=>{});
   }, []);
 
   // Combined scroll listener
@@ -798,7 +818,7 @@ export default function App() {
 
   // Active section tracking
   useEffect(() => {
-    const ids = ["about","projects","experience","skills","contact"];
+    const ids = ["about","projects","experience","recommendations","skills","contact"];
     const io = new IntersectionObserver(
       entries => entries.forEach(e => { if(e.isIntersecting) setActiveSection(e.target.id); }),
       { rootMargin: "-40% 0px -55% 0px" }
@@ -888,11 +908,12 @@ export default function App() {
             <div className="logo-mark">AH</div>Ali Hamad
           </a>
           <div className={`nav-links${mobileMenu?" open":""}`} onClick={()=>setMobileMenu(false)}>
-            <a href="#about"      className={activeSection==="about"?"active":""}>About</a>
-            <a href="#projects"   className={activeSection==="projects"?"active":""}>Projects</a>
-            <a href="#experience" className={activeSection==="experience"?"active":""}>Experience</a>
-            <a href="#skills"     className={activeSection==="skills"?"active":""}>Skills</a>
-            <a href="#contact"    className={activeSection==="contact"?"active":""}>Contact</a>
+            <a href="#about"           className={activeSection==="about"?"active":""}>About</a>
+            <a href="#projects"        className={activeSection==="projects"?"active":""}>Projects</a>
+            <a href="#experience"      className={activeSection==="experience"?"active":""}>Experience</a>
+            <a href="#recommendations" className={activeSection==="recommendations"?"active":""}>Recs</a>
+            <a href="#skills"          className={activeSection==="skills"?"active":""}>Skills</a>
+            <a href="#contact"         className={activeSection==="contact"?"active":""}>Contact</a>
             <button className="btn-admin" onClick={e=>{e.stopPropagation();setAdminOpen(true);setMobileMenu(false);}}>
               ⚙ Admin
             </button>
@@ -1103,6 +1124,43 @@ export default function App() {
           </div>
         </section>
 
+        {/* ── RECOMMENDATIONS */}
+        {recs.length > 0 && (
+          <section className="section" id="recommendations">
+            <div className="section-header reveal">
+              <div>
+                <div className="section-label">What people say</div>
+                <h2 className="section-title">Recommendations</h2>
+              </div>
+              <span className="section-count">{recs.length} {recs.length===1?"reference":"references"}</span>
+            </div>
+            <div className="recs-grid">
+              {recs.map((r,i)=>{
+                const initials = r.name.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
+                return (
+                  <div key={r.id} className={`rec-card reveal rd${Math.min((i%2)+1,6)}`}>
+                    <div className="rec-qdeco">"</div>
+                    <p className="rec-text">"{r.quote}"</p>
+                    <div className="rec-author">
+                      {r.avatar
+                        ? <img src={r.avatar} alt={r.name} className="rec-avatar"/>
+                        : <div className="rec-avatar-init">{initials}</div>}
+                      <div>
+                        <div className="rec-name">{r.name}</div>
+                        {(r.title || r.institution) && (
+                          <div className="rec-role">
+                            {r.title}{r.title && r.institution ? " · " : ""}{r.institution}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {/* ── SKILLS */}
         <section className="section" id="skills">
           <div className="section-header reveal">
@@ -1210,9 +1268,10 @@ export default function App() {
                   {id:"bio",     label:"Bio"},
                   {id:"content", label:"About & Hero"},
                   {id:"timeline",label:"Timeline"},
+                  {id:"recs",    label:"Recs"},
                 ].map(t=>(
                   <button key={t.id} className={`admin-tab${adminTab===t.id?" active":""}`}
-                    onClick={()=>{setAdminTab(t.id);setEditingProj(null);setAddingProj(false);setEditingExp(null);setEditingEdu(null);}}>
+                    onClick={()=>{setAdminTab(t.id);setEditingProj(null);setAddingProj(false);setEditingExp(null);setEditingEdu(null);setEditingRec(null);}}>
                     {t.label}
                   </button>
                 ))}
@@ -1280,6 +1339,94 @@ export default function App() {
                   <button className="btn-save" style={{marginTop:4}} onClick={saveSkills}>Save Skills</button>
                 </div>
               )}
+              {/* ── RECS TAB */}
+              {adminTab==="recs" && (
+                <div style={{display:"flex",flexDirection:"column",gap:14}}>
+                  {!editingRec ? (
+                    <>
+                      <button className="btn-primary" style={{alignSelf:"flex-start",padding:"9px 20px",fontSize:"0.85rem"}}
+                        onClick={()=>setEditingRec({_isNew:true,name:"",title:"",institution:"",quote:"",avatar:"",sort_order:recs.length})}>
+                        <PlusIcon/> Add Recommendation
+                      </button>
+                      {recs.length===0 && (
+                        <p style={{color:"var(--muted)",fontSize:"0.85rem",padding:"20px 0"}}>No recommendations yet. Add your first one above.</p>
+                      )}
+                      {recs.map(r=>(
+                        <div key={r.id} className="proj-list-item">
+                          {r.avatar
+                            ? <img src={r.avatar} alt={r.name} style={{width:38,height:38,borderRadius:"50%",objectFit:"cover",flexShrink:0,border:"1px solid var(--border2)"}}/>
+                            : <div style={{width:38,height:38,borderRadius:"50%",flexShrink:0,background:"linear-gradient(135deg,var(--accent2),var(--accent3))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.72rem",fontWeight:800,color:"#fff",fontFamily:"Syne,sans-serif"}}>
+                                {r.name.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase()}
+                              </div>}
+                          <div style={{flex:1,minWidth:0}}>
+                            <div className="proj-list-name">{r.name}</div>
+                            <div className="proj-list-sub">{r.title}{r.title&&r.institution?" · ":""}{r.institution}</div>
+                          </div>
+                          <button className="btn-edit" onClick={()=>setEditingRec({_isNew:false,...r})}>Edit</button>
+                          <button className="btn-del" onClick={async()=>{
+                            try { await api.deleteRecommendation(r.id); setRecs(rs=>rs.filter(x=>x.id!==r.id)); showToast("Deleted"); }
+                            catch { showToast("Error deleting"); }
+                          }}>Del</button>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      <p style={{color:"var(--muted2)",fontSize:"0.85rem",marginBottom:4}}>
+                        {editingRec._isNew ? "New recommendation" : `Editing: ${editingRec.name}`}
+                      </p>
+                      <div className="form-grid">
+                        <div className="field">
+                          <label>Full Name *</label>
+                          <input value={editingRec.name} onChange={e=>setEditingRec(r=>({...r,name:e.target.value}))} placeholder="Dr. Jane Smith"/>
+                        </div>
+                        <div className="field">
+                          <label>Title / Role</label>
+                          <input value={editingRec.title} onChange={e=>setEditingRec(r=>({...r,title:e.target.value}))} placeholder="AI Engineering Instructor"/>
+                        </div>
+                        <div className="field form-full">
+                          <label>Institution / Company</label>
+                          <input value={editingRec.institution} onChange={e=>setEditingRec(r=>({...r,institution:e.target.value}))} placeholder="SE Factory"/>
+                        </div>
+                        <div className="field form-full">
+                          <label>Quote / Recommendation text</label>
+                          <textarea rows={4} value={editingRec.quote}
+                            onChange={e=>setEditingRec(r=>({...r,quote:e.target.value}))}
+                            placeholder="Ali consistently delivered production-quality systems that surprised even senior engineers..."/>
+                        </div>
+                        <div className="field form-full">
+                          <label>Photo URL (optional — leave blank for initials avatar)</label>
+                          <input value={editingRec.avatar} onChange={e=>setEditingRec(r=>({...r,avatar:e.target.value}))} placeholder="https://…/photo.jpg"/>
+                        </div>
+                        <div className="field">
+                          <label>Sort Order (lower = first)</label>
+                          <input type="number" value={editingRec.sort_order} onChange={e=>setEditingRec(r=>({...r,sort_order:+e.target.value}))}/>
+                        </div>
+                      </div>
+                      <div style={{display:"flex",gap:10,marginTop:8}}>
+                        <button className="btn-save" style={{margin:0,flex:1}} onClick={async()=>{
+                          const {_isNew,...payload} = editingRec;
+                          try {
+                            if(_isNew) {
+                              const created = await api.createRecommendation(payload);
+                              setRecs(rs=>[...rs,created]);
+                            } else {
+                              const updated = await api.updateRecommendation(payload.id, payload);
+                              setRecs(rs=>rs.map(r=>r.id===updated.id?updated:r));
+                            }
+                            setEditingRec(null); showToast("Saved ✓");
+                          } catch { showToast("Error saving"); }
+                        }}>Save Recommendation</button>
+                        <button onClick={()=>setEditingRec(null)}
+                          style={{padding:"13px 20px",borderRadius:10,background:"var(--bg3)",border:"1px solid var(--border)",color:"var(--muted2)",cursor:"pointer",fontFamily:"Syne,sans-serif",fontWeight:600}}>
+                          Cancel
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
               {/* ── CONTENT TAB */}
               {adminTab==="content" && (
                 <div style={{display:"flex",flexDirection:"column",gap:20}}>
