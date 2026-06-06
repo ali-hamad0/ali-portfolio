@@ -771,6 +771,7 @@ export default function App() {
   // ── Recommendations
   const [recs,        setRecs]        = useState([]);
   const [editingRec,  setEditingRec]  = useState(null);
+  const [recImgOpen,  setRecImgOpen]  = useState(null);
 
   // ── Admin timeline editing state
   const [editingExp,  setEditingExp]  = useState(null);
@@ -1138,7 +1139,7 @@ export default function App() {
                     <p className="rec-text">"{r.quote}"</p>
                     <div className="rec-author">
                       {r.avatar
-                        ? <img src={r.avatar} alt={r.name} className="rec-avatar"/>
+                        ? <img src={r.avatar} alt={r.name} className="rec-avatar" style={{cursor:"zoom-in"}} onClick={()=>setRecImgOpen(r.avatar)}/>
                         : <div className="rec-avatar-init">{initials}</div>}
                       <div>
                         <div className="rec-name">{r.name}</div>
@@ -1232,6 +1233,20 @@ export default function App() {
       <button className={`back-top${showBackTop?" vis":""}`} onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} aria-label="Back to top">
         <ArrowUp/>
       </button>
+
+      {/* ── REC IMAGE LIGHTBOX */}
+      {recImgOpen && (
+        <div onClick={()=>setRecImgOpen(null)}
+          style={{position:"fixed",inset:0,zIndex:600,background:"rgba(13,15,30,0.82)",backdropFilter:"blur(18px)",WebkitBackdropFilter:"blur(18px)",display:"flex",alignItems:"center",justifyContent:"center",padding:20,cursor:"zoom-out",animation:"fadeIn .18s ease"}}>
+          <img src={recImgOpen} alt="recommendation photo"
+            onClick={e=>e.stopPropagation()}
+            style={{maxWidth:"min(520px,90vw)",maxHeight:"80vh",borderRadius:16,objectFit:"contain",boxShadow:"0 32px 80px rgba(0,0,0,0.4)",border:"2px solid rgba(255,255,255,0.1)",cursor:"default"}}/>
+          <button onClick={()=>setRecImgOpen(null)}
+            style={{position:"absolute",top:20,right:20,width:38,height:38,borderRadius:10,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(14px)",border:"1px solid rgba(255,255,255,0.15)",color:"#fff",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.2rem",lineHeight:1,fontFamily:"sans-serif"}}>
+            ×
+          </button>
+        </div>
+      )}
 
       {/* ── ADMIN */}
       {adminOpen && (
