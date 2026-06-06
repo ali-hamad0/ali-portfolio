@@ -220,6 +220,28 @@ footer{border-top:1px solid var(--border);padding:32px 0;margin-top:48px}
 .footer-links a{color:var(--muted);font-size:0.78rem;text-decoration:none;transition:color .2s}
 .footer-links a:hover{color:var(--accent)}
 
+/* ── Experience */
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.exp-grid{grid-template-columns:1fr}}
+.exp-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-r);padding:28px;transition:border-color .28s,transform .3s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden}
+.exp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0.55}
+.exp-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.exp-company{display:inline-flex;align-items:center;gap:7px;padding:4px 13px;border-radius:999px;font-size:0.66rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:0.05em;text-transform:uppercase;border:1px solid var(--border2);color:var(--muted2);background:rgba(255,255,255,0.03);margin-bottom:14px}
+.exp-role{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);line-height:1.3;letter-spacing:-0.015em;margin-bottom:6px}
+.exp-period{font-size:0.74rem;color:var(--accent);font-weight:600;font-family:'Syne',sans-serif;letter-spacing:0.03em;opacity:0.9}
+.exp-bullets{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.exp-bullets li{font-size:0.82rem;color:var(--muted2);line-height:1.74;padding-left:16px;position:relative}
+.exp-bullets li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:0.55}
+/* ── Education */
+.edu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:28px}
+.edu-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;transition:border-color .25s,transform .28s cubic-bezier(0.16,1,0.3,1)}
+.edu-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.edu-degree{font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:5px;letter-spacing:-0.01em}
+.edu-inst{font-size:0.8rem;color:var(--muted2);margin-bottom:6px}
+.edu-period{font-size:0.72rem;color:var(--accent);font-weight:600;font-family:'Syne',sans-serif;opacity:0.9}
+.lang-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.lang-chip{padding:7px 16px;border-radius:999px;background:var(--bg2);border:1px solid var(--border);font-size:0.78rem;color:var(--muted2);font-weight:400;display:inline-flex;align-items:center;gap:6px}
+.lang-chip strong{color:var(--text);font-family:'Syne',sans-serif;font-size:0.77rem;font-weight:700}
 /* ── Admin */
 .admin-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:16px}
 .admin-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:840px;max-height:92vh;overflow-y:auto;padding:32px;position:relative}
@@ -323,6 +345,16 @@ const LinkedinIcon = () => (
     <circle cx="4" cy="4" r="2"/>
   </svg>
 );
+const BriefcaseIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+  </svg>
+);
+const GraduationCapIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+  </svg>
+);
 
 // ── CAT CONFIG
 const CAT_MAP = {
@@ -345,6 +377,48 @@ const INITIAL_SKILLS = [
   { category:"Infra & DB",     items:["PostgreSQL","pgvector","Redis","Docker","MinIO","HashiCorp Vault"] },
   { category:"Frontend",       items:["React","Vite","Tailwind","Streamlit"] },
   { category:"MLOps & CI",     items:["GitHub Actions","Drift Detection","Eval Gates","PSI / chi²"] },
+];
+
+const EXPERIENCE = [
+  {
+    role: "AI Engineering Intern / Bootcamp Graduate",
+    company: "SE Factory",
+    period: "2026",
+    bullets: [
+      "Completed intensive AI Engineering bootcamp; shipped 8+ evaluated production systems end-to-end.",
+      "Built LangGraph multi-agent pipelines, RAG systems, and ML classifiers with CI eval gates.",
+      "Mentored peers on LangChain, FastAPI architecture, and MLOps tooling (MLflow, Drift detection).",
+    ],
+  },
+  {
+    role: "Freelance AI & Full-Stack Developer",
+    company: "Self-employed",
+    period: "2025 – Present",
+    bullets: [
+      "Delivered Albert, a multi-tenant AI SaaS with Postgres RLS, NeMo Guardrails, and ONNX serving.",
+      "Consulted on LLM integration and agentic workflow design for early-stage Lebanese startups.",
+      "Implemented RAG pipelines, document classifiers, and REST APIs for client projects.",
+    ],
+  },
+];
+
+const EDUCATION = [
+  {
+    degree: "BSc Computer Science",
+    institution: "Lebanese International University",
+    period: "Expected June 2026",
+  },
+  {
+    degree: "AI Engineering Bootcamp",
+    institution: "SE Factory",
+    period: "2025",
+  },
+];
+
+const LANGUAGES = [
+  { lang: "English", level: "IELTS 5.5" },
+  { lang: "Arabic",  level: "Native" },
+  { lang: "French",  level: "French-educated" },
 ];
 
 // ── TAG INPUT
@@ -582,7 +656,7 @@ export default function App() {
 
   // Active section tracking
   useEffect(() => {
-    const sections = ["projects","skills","contact"];
+    const sections = ["projects","experience","skills","contact"];
     const io = new IntersectionObserver(
       entries => entries.forEach(e => { if(e.isIntersecting) setActiveSection(e.target.id); }),
       { rootMargin: "-40% 0px -55% 0px" }
@@ -681,9 +755,10 @@ export default function App() {
             Ali Hamad
           </a>
           <div className={`nav-links${mobileMenu?" open":""}`} onClick={()=>setMobileMenu(false)}>
-            <a href="#projects" className={activeSection==="projects"?"active":""}>Projects</a>
-            <a href="#skills"   className={activeSection==="skills"?"active":""}>Skills</a>
-            <a href="#contact"  className={activeSection==="contact"?"active":""}>Contact</a>
+            <a href="#projects"   className={activeSection==="projects"?"active":""}>Projects</a>
+            <a href="#experience" className={activeSection==="experience"?"active":""}>Experience</a>
+            <a href="#skills"    className={activeSection==="skills"?"active":""}>Skills</a>
+            <a href="#contact"   className={activeSection==="contact"?"active":""}>Contact</a>
             <button className="btn-admin" onClick={e=>{e.stopPropagation();setAdminOpen(true);setMobileMenu(false);}}>
               ⚙ Admin
             </button>
@@ -824,6 +899,53 @@ export default function App() {
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        {/* ── EXPERIENCE */}
+        <section className="section" id="experience">
+          <div className="section-header reveal">
+            <div>
+              <div className="section-label">Background</div>
+              <h2 className="section-title">Experience</h2>
+            </div>
+          </div>
+
+          <div className="exp-grid" style={{marginBottom:52}}>
+            {EXPERIENCE.map((e,i)=>(
+              <div key={i} className={`exp-card reveal rd${i+1}`}>
+                <div className="exp-company"><BriefcaseIcon/>{e.company}</div>
+                <div className="exp-role">{e.role}</div>
+                <div className="exp-period">{e.period}</div>
+                <ul className="exp-bullets">
+                  {e.bullets.map((b,j)=><li key={j}>{b}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div style={{marginBottom:20}} className="reveal">
+            <div className="section-label" style={{marginBottom:14}}>Education</div>
+            <div className="edu-grid">
+              {EDUCATION.map((e,i)=>(
+                <div key={i} className={`edu-card reveal rd${i+1}`}>
+                  <div className="edu-degree">{e.degree}</div>
+                  <div className="edu-inst">{e.institution}</div>
+                  <div className="edu-period">{e.period}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="reveal rd1">
+            <div className="section-label" style={{marginBottom:14}}>Languages</div>
+            <div className="lang-row">
+              {LANGUAGES.map(l=>(
+                <span key={l.lang} className="lang-chip">
+                  <strong>{l.lang}</strong>{l.level}
+                </span>
+              ))}
+            </div>
           </div>
         </section>
 
