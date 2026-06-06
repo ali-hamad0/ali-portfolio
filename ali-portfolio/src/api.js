@@ -31,15 +31,21 @@ export const getProjects = () =>
   fetch(`${BASE}/projects`).then(r => r.json());
 
 // ── PROJECTS (admin)
-export const createProject = (body) =>
-  fetch(`${BASE}/projects`, {
+export const createProject = async (body) => {
+  const r = await fetch(`${BASE}/projects/`, {
     method: "POST", headers: authHeaders(), body: JSON.stringify(body),
-  }).then(r => r.json());
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+};
 
-export const updateProject = (id, body) =>
-  fetch(`${BASE}/projects/${id}`, {
+export const updateProject = async (id, body) => {
+  const r = await fetch(`${BASE}/projects/${id}`, {
     method: "PUT", headers: authHeaders(), body: JSON.stringify(body),
-  }).then(r => r.json());
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+};
 
 export const deleteProject = (id) =>
   fetch(`${BASE}/projects/${id}`, {

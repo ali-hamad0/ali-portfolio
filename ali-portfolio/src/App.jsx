@@ -120,6 +120,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(8,8,16,0.85);backdrop-filt
 .cat-rag{background:rgba(50,150,255,0.1);color:#70b8ff}
 .cat-cv{background:rgba(255,100,150,0.1);color:#ff8ab5}
 .cat-mlops{background:rgba(255,120,80,0.1);color:#ff9070}
+.cat-gamedev{background:rgba(160,100,255,0.1);color:#c084fc}
 .cat-other{background:rgba(255,255,255,0.06);color:var(--muted)}
 
 /* MODAL */
@@ -282,12 +283,13 @@ const LinkedinIcon = () => (
 
 // ── CAT CONFIG
 const CAT_MAP = {
-  SaaS:   { label:"SaaS",    cls:"cat-saas" },
-  "AI/ML":{ label:"AI/ML",   cls:"cat-aiml" },
-  Agents: { label:"Agents",  cls:"cat-agents" },
-  RAG:    { label:"RAG",     cls:"cat-rag" },
-  CV:     { label:"CV",      cls:"cat-cv" },
-  MLOps:  { label:"MLOps",   cls:"cat-mlops" },
+  SaaS:      { label:"SaaS",      cls:"cat-saas" },
+  "AI/ML":   { label:"AI/ML",     cls:"cat-aiml" },
+  Agents:    { label:"Agents",    cls:"cat-agents" },
+  RAG:       { label:"RAG",       cls:"cat-rag" },
+  CV:        { label:"CV",        cls:"cat-cv" },
+  MLOps:     { label:"MLOps",     cls:"cat-mlops" },
+  "Game Dev":{ label:"Game Dev",  cls:"cat-gamedev" },
 };
 
 // ── INITIAL DATA
@@ -342,8 +344,6 @@ const INITIAL_SKILLS = [
   { category:"Frontend",       items:["React","Vite","Tailwind","Streamlit"] },
   { category:"MLOps & CI",     items:["GitHub Actions","Drift Detection","Eval Gates","PSI / chi²"] },
 ];
-
-const ADMIN_PWD = "Ali@2025#Secure";
 
 // ── TAG INPUT
 function TagInput({ value, onChange }) {
@@ -665,7 +665,7 @@ export default function App() {
               <h1>AI & Software<br/><span className="grad">Engineer</span></h1>
               <p className="hero-sub">Building production-grade intelligent systems — agentic pipelines, fine-tuned models, RAG, and MLOps. Every decision backed by a number.</p>
               <div className="hero-actions">
-                <a href="#projects" className="btn-primary"><PlusIcon/> View Projects</a>
+                <a href="#projects" className="btn-primary"><ArrowRight/> View Projects</a>
                 <a href={bio.github} target="_blank" rel="noreferrer" className="btn-outline"><GithubIcon/> GitHub</a>
                 <a href={bio.linkedin} target="_blank" rel="noreferrer" className="btn-outline"><LinkedinIcon/> LinkedIn</a>
                 <a href={bio.cvUrl} className="btn-outline">Download CV</a>
@@ -673,7 +673,7 @@ export default function App() {
               <div className="hero-stats">
                 <div><div className="hero-stat-num">{projects.length}+</div><div className="hero-stat-label">Projects Built</div></div>
                 <div><div className="hero-stat-num">3+</div><div className="hero-stat-label">Years Experience</div></div>
-                <div><div className="hero-stat-num">12+</div><div className="hero-stat-label">Tech Stack</div></div>
+                <div><div className="hero-stat-num">{skills.reduce((acc,s)=>acc+s.items.length,0)}+</div><div className="hero-stat-label">Technologies</div></div>
               </div>
             </div>
             <div className="hero-photo-wrap">
