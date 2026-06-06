@@ -1017,17 +1017,12 @@ export default function App() {
               <div className="section-label">Work</div>
               <h2 className="section-title">Projects</h2>
             </div>
-            <span className="section-count">{filteredProjects.length} / {projects.length}</span>
-          </div>
-          <div className="proj-filter reveal rd1">
-            {cats.map(c=>(
-              <button key={c} className={`proj-filter-btn${filterCat===c?" active":""}`} onClick={()=>setFilterCat(c)}>{c}</button>
-            ))}
+            <span className="section-count">{projects.length} projects</span>
           </div>
           <div className="projects-grid">
-            {filteredProjects.map((p,i) => {
+            {projects.map((p,i) => {
               const cat = CAT_MAP[p.cat] || {label:p.cat, cls:"cat-other"};
-              const isFeatured = p.featured && filterCat === "All";
+              const isFeatured = p.featured;
               const delay = `rd${Math.min((i%3)+1,6)}`;
               if (isFeatured) return (
                 <div key={p.id} className={`proj-card is-featured reveal ${delay}`} onClick={()=>setSelected(p)}>
