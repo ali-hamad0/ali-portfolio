@@ -237,7 +237,12 @@ nav.scrolled{background:rgba(255,255,255,0.97);border-bottom-color:var(--border)
 .rec-qdeco{font-size:4rem;line-height:1;color:var(--accent2);font-family:'Syne',sans-serif;font-weight:800;opacity:0.12;position:absolute;top:14px;right:20px;letter-spacing:-0.06em;pointer-events:none;user-select:none}
 .rec-text{font-size:0.875rem;color:var(--muted2);line-height:1.88;font-style:italic;flex:1;position:relative;z-index:1}
 .rec-author{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
-.rec-avatar{width:46px;height:46px;border-radius:50%;flex-shrink:0;object-fit:cover;border:2px solid var(--border2)}
+.rec-avatar-wrap{position:relative;width:46px;height:46px;flex-shrink:0;cursor:zoom-in}
+.rec-avatar-wrap:hover .rec-avatar{border-color:var(--accent);transform:scale(1.06)}
+.rec-avatar-wrap:hover .rec-avatar-zoom{opacity:1}
+.rec-avatar-zoom{position:absolute;inset:0;border-radius:50%;background:rgba(14,165,233,0.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .18s ease;pointer-events:none}
+.rec-avatar-zoom svg{width:16px;height:16px;color:#fff;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rec-avatar{width:46px;height:46px;border-radius:50%;flex-shrink:0;object-fit:cover;border:2px solid var(--border2);transition:border-color .18s,transform .18s}
 .rec-avatar-init{width:46px;height:46px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;color:#fff;letter-spacing:0.02em}
 .rec-name{font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;line-height:1.2}
 .rec-role{font-size:0.74rem;color:var(--muted2);margin-top:3px;line-height:1.4}
@@ -1139,7 +1144,14 @@ export default function App() {
                     <p className="rec-text">"{r.quote}"</p>
                     <div className="rec-author">
                       {r.avatar
-                        ? <img src={r.avatar} alt={r.name} className="rec-avatar" style={{cursor:"zoom-in"}} onClick={()=>setRecImgOpen(r.avatar)}/>
+                        ? (
+                          <div className="rec-avatar-wrap" onClick={()=>setRecImgOpen(r.avatar)}>
+                            <img src={r.avatar} alt={r.name} className="rec-avatar"/>
+                            <div className="rec-avatar-zoom">
+                              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+                            </div>
+                          </div>
+                        )
                         : <div className="rec-avatar-init">{initials}</div>}
                       <div>
                         <div className="rec-name">{r.name}</div>
