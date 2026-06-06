@@ -427,7 +427,7 @@ const INITIAL_SKILLS = [
   { category:"MLOps & CI",     items:["GitHub Actions","Drift Detection","Eval Gates","PSI / chi²"] },
 ];
 
-const EXPERIENCE = [
+const DEFAULT_EXPERIENCE = [
   {
     role: "AI Engineering Intern / Bootcamp Graduate",
     company: "SE Factory",
@@ -450,18 +450,18 @@ const EXPERIENCE = [
   },
 ];
 
-const EDUCATION = [
+const DEFAULT_EDUCATION = [
   { degree: "BSc Computer Science", institution: "Lebanese International University", period: "Expected June 2026" },
   { degree: "AI Engineering Bootcamp", institution: "SE Factory", period: "2025" },
 ];
 
-const LANGUAGES = [
+const DEFAULT_LANGUAGES = [
   { lang: "English", level: "IELTS 5.5" },
   { lang: "Arabic",  level: "Native" },
   { lang: "French",  level: "French-educated" },
 ];
 
-const TYPING_PHRASES = [
+const DEFAULT_TYPING_PHRASES = [
   "Multi-Agent Systems Builder",
   "RAG & LLM Specialist",
   "MLOps Engineer",
@@ -469,11 +469,19 @@ const TYPING_PHRASES = [
   "Full-Stack AI Developer",
 ];
 
-const ABOUT_CARDS = [
+const DEFAULT_ABOUT_CARDS = [
   { icon:"⚡", title:"Eval-Driven Development", sub:"CI eval gates, LangSmith traces, and measurable benchmarks — every system is tested before it ships." },
   { icon:"🚀", title:"Production-Ready Systems", sub:"Containerized, monitored, and deployed. I build for production, not just notebooks." },
   { icon:"🔗", title:"End-to-End Ownership", sub:"From data collection and model training to API design and frontend integration." },
 ];
+
+const DEFAULT_ABOUT_PARAS = [
+  "I'm Ali Hamad, an AI & Software Engineer from Lebanon with a focus on production-grade intelligent systems. I design and ship fully-evaluated, containerized AI applications — from multi-agent LangGraph pipelines and RAG architectures to fine-tuned classifiers and MLOps stacks.",
+  "Every system I build is backed by measurable metrics: CI eval gates that block regression, MLflow experiment tracking, LangSmith traces for latency profiling, and drift detection with alerting. I don't just prototype — I engineer.",
+  "Currently completing my BSc in Computer Science at Lebanese International University and a graduate of SE Factory's AI Engineering Bootcamp, where I shipped 8+ evaluated production systems end-to-end. Open to AI engineering, agentic systems, or MLOps roles globally.",
+];
+const DEFAULT_PILLS    = ["LangGraph / Multi-Agent","RAG & Retrieval","Eval-Driven MLOps","FastAPI + Async Python","Full-Stack AI","Open to Relocation"];
+const DEFAULT_HI_PILLS = ["LangGraph / Multi-Agent","RAG & Retrieval","Eval-Driven MLOps"];
 
 // ── HOOKS
 function useTypingEffect(phrases) {
@@ -732,7 +740,24 @@ export default function App() {
   const [activeSection, setActiveSection] = useState("home");
   const [statsVisible,  setStatsVisible]  = useState(false);
   const statsRef = useRef(null);
-  const typedText = useTypingEffect(TYPING_PHRASES);
+
+  // ── Editable content sections
+  const [experience, setExperience] = useState(DEFAULT_EXPERIENCE);
+  const [education,  setEducation]  = useState(DEFAULT_EDUCATION);
+  const [languages,  setLanguages]  = useState(DEFAULT_LANGUAGES);
+  const [aboutData,  setAboutData]  = useState({
+    paras:   DEFAULT_ABOUT_PARAS,
+    pills:   DEFAULT_PILLS,
+    hiPills: DEFAULT_HI_PILLS,
+    cards:   DEFAULT_ABOUT_CARDS,
+  });
+  const [heroData, setHeroData] = useState({ phrases: DEFAULT_TYPING_PHRASES, yearsExp: "3+" });
+
+  // ── Admin timeline editing state
+  const [editingExp,  setEditingExp]  = useState(null);
+  const [editingEdu,  setEditingEdu]  = useState(null);
+
+  const typedText = useTypingEffect(heroData.phrases);
 
   const showToast = msg => { setToast({show:true,msg}); setTimeout(()=>setToast({show:false,msg:""}),2600); };
 
@@ -740,6 +765,11 @@ export default function App() {
     api.getProjects().then(d => { if(Array.isArray(d)) setProjects(d); }).catch(()=>{});
     api.getSkills().then(d => { if(Array.isArray(d)) setSkills(d); }).catch(()=>{});
     api.getBio().then(d => { if(d?.name) setBio({...d, cvUrl: d.cv_url||"#"}); }).catch(()=>{});
+    api.getContent("experience").then(d => { if(Array.isArray(d.value)) setExperience(d.value); }).catch(()=>{});
+    api.getContent("education").then(d  => { if(Array.isArray(d.value)) setEducation(d.value);  }).catch(()=>{});
+    api.getContent("languages").then(d  => { if(Array.isArray(d.value)) setLanguages(d.value);  }).catch(()=>{});
+    api.getContent("about").then(d => { if(d.value?.paras) setAboutData(d.value); }).catch(()=>{});
+    api.getContent("hero").then(d  => { if(d.value?.phrases) setHeroData(d.value); }).catch(()=>{});
   }, []);
 
   // Combined scroll listener
@@ -905,7 +935,7 @@ export default function App() {
                   <div className="hero-stat-label">Projects Built</div>
                 </div>
                 <div>
-                  <div className="hero-stat-num">3+</div>
+                  <div className="hero-stat-num">{heroData.yearsExp}</div>
                   <div className="hero-stat-label">Years Experience</div>
                 </div>
                 <div>
@@ -940,34 +970,15 @@ export default function App() {
           </div>
           <div className="about-layout">
             <div className="about-body reveal rd1">
-              <p>
-                I'm <strong>Ali Hamad</strong>, an AI & Software Engineer from Lebanon with a focus on
-                production-grade intelligent systems. I design and ship fully-evaluated, containerized
-                AI applications — from <strong>multi-agent LangGraph pipelines</strong> and RAG architectures
-                to fine-tuned classifiers and MLOps stacks.
-              </p>
-              <p>
-                Every system I build is backed by measurable metrics: CI eval gates that block
-                regression, MLflow experiment tracking, LangSmith traces for latency profiling, and
-                drift detection with alerting. I don't just prototype — <strong>I engineer.</strong>
-              </p>
-              <p>
-                Currently completing my BSc in Computer Science at Lebanese International University
-                and a graduate of SE Factory's AI Engineering Bootcamp, where I shipped 8+ evaluated
-                production systems end-to-end. <strong>Open to AI engineering, agentic systems,
-                or MLOps roles globally.</strong>
-              </p>
+              {aboutData.paras.map((p,i)=><p key={i}>{p}</p>)}
               <div className="strength-pills">
-                <span className="s-pill hi">LangGraph / Multi-Agent</span>
-                <span className="s-pill hi">RAG & Retrieval</span>
-                <span className="s-pill hi">Eval-Driven MLOps</span>
-                <span className="s-pill">FastAPI + Async Python</span>
-                <span className="s-pill">Full-Stack AI</span>
-                <span className="s-pill">Open to Relocation</span>
+                {aboutData.pills.map(pill=>(
+                  <span key={pill} className={`s-pill${aboutData.hiPills.includes(pill)?" hi":""}`}>{pill}</span>
+                ))}
               </div>
             </div>
             <div className="about-cards">
-              {ABOUT_CARDS.map((c,i)=>(
+              {aboutData.cards.map((c,i)=>(
                 <div key={i} className={`a-card reveal rd${i+1}`}>
                   <div className="a-card-icon">{c.icon}</div>
                   <div className="a-card-title">{c.title}</div>
@@ -1051,7 +1062,7 @@ export default function App() {
             </div>
           </div>
           <div className="tl-wrap" style={{marginBottom:52}}>
-            {EXPERIENCE.map((e,i)=>(
+            {experience.map((e,i)=>(
               <div key={i} className={`tl-item reveal rd${i+1}`}>
                 <div className="tl-dot"><BriefcaseIcon/></div>
                 <div className="tl-card">
@@ -1069,7 +1080,7 @@ export default function App() {
           <div className="reveal">
             <div className="sub-label">Education</div>
             <div className="edu-grid">
-              {EDUCATION.map((e,i)=>(
+              {education.map((e,i)=>(
                 <div key={i} className={`edu-card reveal rd${i+1}`}>
                   <div style={{marginBottom:8,color:"var(--muted2)"}}><GraduationCapIcon/></div>
                   <div className="edu-degree">{e.degree}</div>
@@ -1083,7 +1094,7 @@ export default function App() {
           <div className="reveal rd1">
             <div className="sub-label">Languages</div>
             <div className="lang-row">
-              {LANGUAGES.map(l=>(
+              {languages.map(l=>(
                 <span key={l.lang} className="lang-chip">
                   <strong>{l.lang}</strong>{l.level}
                 </span>
@@ -1193,10 +1204,16 @@ export default function App() {
               <button className="btn-x" onClick={()=>{setAdminOpen(false);setEditingProj(null);setAddingProj(false);}}>×</button>
               <h2><span className="admin-dot"/> Portfolio Admin</h2>
               <div className="admin-tabs">
-                {["projects","skills","bio"].map(t=>(
-                  <button key={t} className={`admin-tab${adminTab===t?" active":""}`}
-                    onClick={()=>{setAdminTab(t);setEditingProj(null);setAddingProj(false);}}>
-                    {t.charAt(0).toUpperCase()+t.slice(1)}
+                {[
+                  {id:"projects",label:"Projects"},
+                  {id:"skills",  label:"Skills"},
+                  {id:"bio",     label:"Bio"},
+                  {id:"content", label:"About & Hero"},
+                  {id:"timeline",label:"Timeline"},
+                ].map(t=>(
+                  <button key={t.id} className={`admin-tab${adminTab===t.id?" active":""}`}
+                    onClick={()=>{setAdminTab(t.id);setEditingProj(null);setAddingProj(false);setEditingExp(null);setEditingEdu(null);}}>
+                    {t.label}
                   </button>
                 ))}
               </div>
@@ -1263,6 +1280,237 @@ export default function App() {
                   <button className="btn-save" style={{marginTop:4}} onClick={saveSkills}>Save Skills</button>
                 </div>
               )}
+              {/* ── CONTENT TAB */}
+              {adminTab==="content" && (
+                <div style={{display:"flex",flexDirection:"column",gap:20}}>
+                  {/* Hero */}
+                  <p className="sub-label">Hero</p>
+                  <div className="field">
+                    <label>Typing Phrases (Enter to add)</label>
+                    <div style={{background:"var(--bg3)",border:"1px solid var(--border2)",borderRadius:8,padding:"8px 12px",display:"flex",flexWrap:"wrap",gap:6}}
+                         onClick={e=>e.currentTarget.querySelector("input").focus()}>
+                      {heroData.phrases.map(t=>(
+                        <span key={t} className="tag-input-chip">{t}
+                          <button type="button" onClick={()=>setHeroData(h=>({...h,phrases:h.phrases.filter(x=>x!==t)}))}>×</button>
+                        </span>
+                      ))}
+                      <input className="tags-bare-input" placeholder="Add phrase…"
+                        onKeyDown={e=>{if((e.key==="Enter"||e.key===",")&&e.target.value.trim()){setHeroData(h=>({...h,phrases:[...h.phrases,e.target.value.trim()]}));e.target.value="";}}}/>
+                    </div>
+                  </div>
+                  <div className="field">
+                    <label>Years Experience (stat bar)</label>
+                    <input style={{maxWidth:120}} value={heroData.yearsExp} onChange={e=>setHeroData(h=>({...h,yearsExp:e.target.value}))} placeholder="3+"/>
+                  </div>
+                  <div style={{height:1,background:"var(--border)"}}/>
+                  {/* About text */}
+                  <p className="sub-label">About Paragraphs</p>
+                  {[0,1,2].map(i=>(
+                    <div key={i} className="field">
+                      <label>Paragraph {i+1}</label>
+                      <textarea rows={3} value={aboutData.paras[i]||""}
+                        onChange={e=>{const p=[...aboutData.paras];p[i]=e.target.value;setAboutData(a=>({...a,paras:p}));}}/>
+                    </div>
+                  ))}
+                  <div className="field">
+                    <label>Strength Pills (Enter to add)</label>
+                    <div style={{background:"var(--bg3)",border:"1px solid var(--border2)",borderRadius:8,padding:"8px 12px",display:"flex",flexWrap:"wrap",gap:6}}
+                         onClick={e=>e.currentTarget.querySelector("input").focus()}>
+                      {aboutData.pills.map(t=>(
+                        <span key={t} className="tag-input-chip">{t}
+                          <button type="button" onClick={()=>setAboutData(a=>({...a,pills:a.pills.filter(x=>x!==t),hiPills:a.hiPills.filter(x=>x!==t)}))}>×</button>
+                        </span>
+                      ))}
+                      <input className="tags-bare-input" placeholder="Add pill…"
+                        onKeyDown={e=>{if((e.key==="Enter"||e.key===",")&&e.target.value.trim()){setAboutData(a=>({...a,pills:[...a.pills,e.target.value.trim()]}));e.target.value="";}}}/>
+                    </div>
+                  </div>
+                  <div className="field">
+                    <label>Highlighted Pills — click to toggle accent colour</label>
+                    <div style={{display:"flex",flexWrap:"wrap",gap:6,padding:"6px 0"}}>
+                      {aboutData.pills.map(pill=>{
+                        const hi=aboutData.hiPills.includes(pill);
+                        return (
+                          <span key={pill} onClick={()=>setAboutData(a=>({...a,hiPills:hi?a.hiPills.filter(x=>x!==pill):[...a.hiPills,pill]}))}
+                            style={{padding:"5px 14px",borderRadius:999,border:"1px solid",cursor:"pointer",fontSize:"0.75rem",fontFamily:"Syne,sans-serif",fontWeight:600,userSelect:"none",
+                              borderColor:hi?"rgba(14,165,233,0.32)":"var(--border2)",
+                              color:hi?"var(--accent)":"var(--muted2)",
+                              background:hi?"rgba(14,165,233,0.09)":"var(--bg3)"}}>
+                            {pill}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div style={{height:1,background:"var(--border)"}}/>
+                  <p className="sub-label">About Cards</p>
+                  {aboutData.cards.map((c,i)=>(
+                    <div key={i} style={{background:"var(--bg3)",border:"1px solid var(--border)",borderRadius:12,padding:16,marginBottom:8}}>
+                      <p style={{fontSize:"0.7rem",fontWeight:700,color:"var(--muted2)",marginBottom:10,fontFamily:"Syne,sans-serif",letterSpacing:"0.06em",textTransform:"uppercase"}}>Card {i+1}</p>
+                      <div className="form-grid" style={{gap:10}}>
+                        <div className="field">
+                          <label>Icon (emoji)</label>
+                          <input value={c.icon} style={{maxWidth:72}} onChange={e=>{const cards=[...aboutData.cards];cards[i]={...cards[i],icon:e.target.value};setAboutData(a=>({...a,cards}));}}/>
+                        </div>
+                        <div className="field">
+                          <label>Title</label>
+                          <input value={c.title} onChange={e=>{const cards=[...aboutData.cards];cards[i]={...cards[i],title:e.target.value};setAboutData(a=>({...a,cards}));}}/>
+                        </div>
+                        <div className="field form-full">
+                          <label>Description</label>
+                          <textarea rows={2} value={c.sub} onChange={e=>{const cards=[...aboutData.cards];cards[i]={...cards[i],sub:e.target.value};setAboutData(a=>({...a,cards}));}}/>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button className="btn-save" style={{marginTop:4}} onClick={async()=>{
+                    try {
+                      await Promise.all([api.saveContent("about",aboutData), api.saveContent("hero",heroData)]);
+                      showToast("Content saved ✓");
+                    } catch { showToast("Error saving content"); }
+                  }}>Save Content</button>
+                </div>
+              )}
+
+              {/* ── TIMELINE TAB */}
+              {adminTab==="timeline" && (
+                <div style={{display:"flex",flexDirection:"column",gap:20}}>
+                  {/* ─ Experience */}
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <p className="sub-label" style={{margin:0}}>Experience</p>
+                    {!editingExp && (
+                      <button className="btn-primary" style={{padding:"7px 16px",fontSize:"0.8rem"}}
+                        onClick={()=>setEditingExp({_idx:-1,role:"",company:"",period:"",bullets:""})}>
+                        <PlusIcon/> Add
+                      </button>
+                    )}
+                  </div>
+                  {editingExp ? (
+                    <div style={{background:"var(--bg3)",border:"1px solid var(--border2)",borderRadius:14,padding:20}}>
+                      <div className="form-grid" style={{gap:10}}>
+                        <div className="field">
+                          <label>Role / Position</label>
+                          <input value={editingExp.role} onChange={e=>setEditingExp(x=>({...x,role:e.target.value}))}/>
+                        </div>
+                        <div className="field">
+                          <label>Company</label>
+                          <input value={editingExp.company} onChange={e=>setEditingExp(x=>({...x,company:e.target.value}))}/>
+                        </div>
+                        <div className="field form-full">
+                          <label>Period (e.g. 2025 – Present)</label>
+                          <input value={editingExp.period} onChange={e=>setEditingExp(x=>({...x,period:e.target.value}))}/>
+                        </div>
+                        <div className="field form-full">
+                          <label>Bullet Points (one per line)</label>
+                          <textarea rows={5} value={editingExp.bullets} onChange={e=>setEditingExp(x=>({...x,bullets:e.target.value}))}/>
+                        </div>
+                      </div>
+                      <div style={{display:"flex",gap:8,marginTop:14}}>
+                        <button className="btn-save" style={{margin:0,flex:1}} onClick={()=>{
+                          const entry={role:editingExp.role,company:editingExp.company,period:editingExp.period,
+                            bullets:editingExp.bullets.split("\n").map(b=>b.trim()).filter(Boolean)};
+                          if(editingExp._idx===-1) setExperience(ex=>[...ex,entry]);
+                          else setExperience(ex=>ex.map((e,i)=>i===editingExp._idx?entry:e));
+                          setEditingExp(null);
+                        }}>Save Entry</button>
+                        <button onClick={()=>setEditingExp(null)}
+                          style={{padding:"13px 20px",borderRadius:10,background:"var(--bg3)",border:"1px solid var(--border)",color:"var(--muted2)",cursor:"pointer",fontFamily:"Syne,sans-serif",fontWeight:600}}>Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    experience.map((e,i)=>(
+                      <div key={i} className="proj-list-item">
+                        <div style={{flex:1,minWidth:0}}>
+                          <div className="proj-list-name">{e.role}</div>
+                          <div className="proj-list-sub">{e.company} · {e.period}</div>
+                        </div>
+                        <button className="btn-edit" onClick={()=>setEditingExp({_idx:i,...e,bullets:e.bullets.join("\n")})}>Edit</button>
+                        <button className="btn-del" onClick={()=>setExperience(ex=>ex.filter((_,j)=>j!==i))}>Del</button>
+                      </div>
+                    ))
+                  )}
+                  <div style={{height:1,background:"var(--border)"}}/>
+
+                  {/* ─ Education */}
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <p className="sub-label" style={{margin:0}}>Education</p>
+                    {!editingEdu && (
+                      <button className="btn-primary" style={{padding:"7px 16px",fontSize:"0.8rem"}}
+                        onClick={()=>setEditingEdu({_idx:-1,degree:"",institution:"",period:""})}>
+                        <PlusIcon/> Add
+                      </button>
+                    )}
+                  </div>
+                  {editingEdu ? (
+                    <div style={{background:"var(--bg3)",border:"1px solid var(--border2)",borderRadius:14,padding:20}}>
+                      <div className="form-grid" style={{gap:10}}>
+                        <div className="field">
+                          <label>Degree / Certificate</label>
+                          <input value={editingEdu.degree} onChange={e=>setEditingEdu(x=>({...x,degree:e.target.value}))}/>
+                        </div>
+                        <div className="field">
+                          <label>Institution</label>
+                          <input value={editingEdu.institution} onChange={e=>setEditingEdu(x=>({...x,institution:e.target.value}))}/>
+                        </div>
+                        <div className="field form-full">
+                          <label>Period</label>
+                          <input value={editingEdu.period} onChange={e=>setEditingEdu(x=>({...x,period:e.target.value}))}/>
+                        </div>
+                      </div>
+                      <div style={{display:"flex",gap:8,marginTop:14}}>
+                        <button className="btn-save" style={{margin:0,flex:1}} onClick={()=>{
+                          const entry={degree:editingEdu.degree,institution:editingEdu.institution,period:editingEdu.period};
+                          if(editingEdu._idx===-1) setEducation(ed=>[...ed,entry]);
+                          else setEducation(ed=>ed.map((e,i)=>i===editingEdu._idx?entry:e));
+                          setEditingEdu(null);
+                        }}>Save Entry</button>
+                        <button onClick={()=>setEditingEdu(null)}
+                          style={{padding:"13px 20px",borderRadius:10,background:"var(--bg3)",border:"1px solid var(--border)",color:"var(--muted2)",cursor:"pointer",fontFamily:"Syne,sans-serif",fontWeight:600}}>Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    education.map((e,i)=>(
+                      <div key={i} className="proj-list-item">
+                        <div style={{flex:1,minWidth:0}}>
+                          <div className="proj-list-name">{e.degree}</div>
+                          <div className="proj-list-sub">{e.institution} · {e.period}</div>
+                        </div>
+                        <button className="btn-edit" onClick={()=>setEditingEdu({_idx:i,...e})}>Edit</button>
+                        <button className="btn-del" onClick={()=>setEducation(ed=>ed.filter((_,j)=>j!==i))}>Del</button>
+                      </div>
+                    ))
+                  )}
+                  <div style={{height:1,background:"var(--border)"}}/>
+
+                  {/* ─ Languages */}
+                  <p className="sub-label">Languages</p>
+                  {languages.map((l,i)=>(
+                    <div key={i} style={{display:"flex",gap:8,alignItems:"center",marginBottom:6}}>
+                      <input value={l.lang} placeholder="Language" onChange={e=>setLanguages(ls=>{const n=[...ls];n[i]={...n[i],lang:e.target.value};return n;})}
+                        style={{flex:"0 0 130px",background:"var(--bg3)",border:"1px solid var(--border2)",borderRadius:8,padding:"8px 12px",color:"var(--text)",fontSize:"0.875rem",fontFamily:"Inter,sans-serif",outline:"none"}}/>
+                      <input value={l.level} placeholder="Level (e.g. Native)" onChange={e=>setLanguages(ls=>{const n=[...ls];n[i]={...n[i],level:e.target.value};return n;})}
+                        style={{flex:1,background:"var(--bg3)",border:"1px solid var(--border2)",borderRadius:8,padding:"8px 12px",color:"var(--text)",fontSize:"0.875rem",fontFamily:"Inter,sans-serif",outline:"none"}}/>
+                      <button className="btn-del" onClick={()=>setLanguages(ls=>ls.filter((_,j)=>j!==i))}>×</button>
+                    </div>
+                  ))}
+                  <button className="btn-outline" style={{alignSelf:"flex-start",padding:"8px 18px",fontSize:"0.82rem"}}
+                    onClick={()=>setLanguages(ls=>[...ls,{lang:"",level:""}])}>
+                    <PlusIcon/> Add Language
+                  </button>
+
+                  <button className="btn-save" style={{marginTop:4}} onClick={async()=>{
+                    try {
+                      await Promise.all([
+                        api.saveContent("experience", experience),
+                        api.saveContent("education",  education),
+                        api.saveContent("languages",  languages),
+                      ]);
+                      showToast("Timeline saved ✓");
+                    } catch { showToast("Error saving timeline"); }
+                  }}>Save Timeline</button>
+                </div>
+              )}
+
               {adminTab==="bio" && (
                 <div style={{display:"flex",flexDirection:"column",gap:14}}>
                   <div className="field">

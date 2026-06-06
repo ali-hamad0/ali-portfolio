@@ -14,7 +14,7 @@ class Base(DeclarativeBase):
 
 async def init_db():
     async with engine.begin() as conn:
-        from app.models import project, skill, bio  # noqa: register models
+        from app.models import project, skill, bio, content  # noqa: register models
         await conn.run_sync(Base.metadata.create_all)
 
 async def get_db():

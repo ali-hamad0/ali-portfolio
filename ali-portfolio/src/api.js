@@ -69,6 +69,18 @@ export const removeProjectMedia = (id) =>
     method: "DELETE", headers: { Authorization: `Bearer ${_token}` },
   }).then(r => r.json());
 
+// ── CONTENT (generic key/value sections)
+export const getContent = (key) =>
+  fetch(`${BASE}/content/${key}`).then(r => r.json());
+
+export const saveContent = async (key, value) => {
+  const r = await fetch(`${BASE}/content/${key}`, {
+    method: "PUT", headers: authHeaders(), body: JSON.stringify({ value }),
+  });
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+};
+
 // ── SKILLS
 export const getSkills = () =>
   fetch(`${BASE}/skills`).then(r => r.json());
